@@ -38,8 +38,16 @@ private:
     QLabel *label_3;
     QLabel *label_4;
     QWidget *widget;
-    QWidget *gameWindow;
+    QWidget *GameSpace;
+    QVBoxLayout *verticalLayout_2;
+    QWidget *targetsArea;
+    QWidget *widget_7;
+    QWidget *widget_5;
+    QWidget *PlatformArea;
+    QWidget *freeArea;
 
+
+    QWidget *gameWindow;
     QMainWindow *mainMenu;
 
 
@@ -63,15 +71,14 @@ private:
 
     void setupUi()
     {
-        //auto Form = this;
         if (Form->objectName().isEmpty())
             Form->setObjectName(QString::fromUtf8("Form"));
-        Form->resize(639, 478);
+        Form->resize(625, 726);
         verticalLayout = new QVBoxLayout(Form);
         verticalLayout->setObjectName(QString::fromUtf8("verticalLayout"));
         widget_3 = new QWidget(Form);
         widget_3->setObjectName(QString::fromUtf8("widget_3"));
-        widget_3->setMaximumSize(QSize(16777215, 64));
+        widget_3->setMaximumSize(QSize(16777215, 32));
         horizontalLayout = new QHBoxLayout(widget_3);
         horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
         label = new QLabel(widget_3);
@@ -119,16 +126,68 @@ private:
 
         verticalLayout->addWidget(widget_3);
 
-        gameWindow = new QWidget(Form);
-        gameWindow->setObjectName(QString::fromUtf8("GameWindow"));
+        GameSpace = new QWidget(Form);
+        GameSpace->setObjectName(QString::fromUtf8("GameSpace"));
         QSizePolicy sizePolicy2(QSizePolicy::Minimum, QSizePolicy::Minimum);
         sizePolicy2.setHorizontalStretch(0);
         sizePolicy2.setVerticalStretch(0);
-        sizePolicy2.setHeightForWidth(gameWindow->sizePolicy().hasHeightForWidth());
-        gameWindow->setSizePolicy(sizePolicy2);
-        gameWindow->setMinimumSize(QSize(512, 256));
+        sizePolicy2.setHeightForWidth(GameSpace->sizePolicy().hasHeightForWidth());
+        GameSpace->setSizePolicy(sizePolicy2);
+        GameSpace->setMinimumSize(QSize(512, 256));
+        GameSpace->setStyleSheet(QString::fromUtf8("background-color: rgba(51, 209, 122, 25);"));
+        verticalLayout_2 = new QVBoxLayout(GameSpace);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        targetsArea = new QWidget(GameSpace);
+        targetsArea->setObjectName(QString::fromUtf8("targetsArea"));
+        sizePolicy2.setHeightForWidth(targetsArea->sizePolicy().hasHeightForWidth());
+        targetsArea->setSizePolicy(sizePolicy2);
+        targetsArea->setStyleSheet(QString::fromUtf8("background-color: rgba(64, 155, 191, 52);"));
 
-        verticalLayout->addWidget(gameWindow);
+        verticalLayout_2->addWidget(targetsArea);
+
+        widget_7 = new QWidget(GameSpace);
+        widget_7->setObjectName(QString::fromUtf8("widget_7"));
+        QSizePolicy sizePolicy3(QSizePolicy::Minimum, QSizePolicy::Preferred);
+        sizePolicy3.setHorizontalStretch(0);
+        sizePolicy3.setVerticalStretch(0);
+        sizePolicy3.setHeightForWidth(widget_7->sizePolicy().hasHeightForWidth());
+        widget_7->setSizePolicy(sizePolicy3);
+        widget_7->setMaximumSize(QSize(16777215, 210));
+        widget_5 = new QWidget(widget_7);
+        widget_5->setObjectName(QString::fromUtf8("widget_5"));
+        widget_5->setGeometry(QRect(6, 184, 601, 16));
+        QSizePolicy sizePolicy4(QSizePolicy::Fixed, QSizePolicy::Maximum);
+        sizePolicy4.setHorizontalStretch(0);
+        sizePolicy4.setVerticalStretch(0);
+        sizePolicy4.setHeightForWidth(widget_5->sizePolicy().hasHeightForWidth());
+        widget_5->setSizePolicy(sizePolicy4);
+        widget_5->setMinimumSize(QSize(16, 16));
+        widget_5->setMaximumSize(QSize(16777215, 16));
+        widget_5->setStyleSheet(QString::fromUtf8("background-color: rgba(68, 8, 8, 175);"));
+        PlatformArea = new QWidget(widget_7);
+        PlatformArea->setObjectName(QString::fromUtf8("PlatformArea"));
+        PlatformArea->setGeometry(QRect(6, 144, 591, 32));
+        sizePolicy4.setHeightForWidth(PlatformArea->sizePolicy().hasHeightForWidth());
+        PlatformArea->setSizePolicy(sizePolicy4);
+        PlatformArea->setMinimumSize(QSize(32, 32));
+        PlatformArea->setMaximumSize(QSize(16777215, 32));
+        PlatformArea->setStyleSheet(QString::fromUtf8("background-color: rgb(97, 53, 13);"));
+        freeArea = new QWidget(widget_7);
+        freeArea->setObjectName(QString::fromUtf8("freeArea"));
+        freeArea->setGeometry(QRect(10, 10, 591, 128));
+        QSizePolicy sizePolicy5(QSizePolicy::Fixed, QSizePolicy::Maximum);
+        sizePolicy5.setHorizontalStretch(100);
+        sizePolicy5.setVerticalStretch(100);
+        sizePolicy5.setHeightForWidth(freeArea->sizePolicy().hasHeightForWidth());
+        freeArea->setSizePolicy(sizePolicy5);
+        freeArea->setMinimumSize(QSize(32, 32));
+        freeArea->setMaximumSize(QSize(16777215, 128));
+        freeArea->setStyleSheet(QString::fromUtf8("background-color: rgb(94, 92, 10);"));
+
+        verticalLayout_2->addWidget(widget_7);
+
+
+        verticalLayout->addWidget(GameSpace);
 
 
         retranslateUi();
