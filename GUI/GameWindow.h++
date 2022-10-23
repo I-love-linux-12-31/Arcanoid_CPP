@@ -20,6 +20,8 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include <QTime>
+#include <QTimer>
 #include "MainMenu.hpp"
 
 QT_BEGIN_NAMESPACE
@@ -46,13 +48,44 @@ private:
     QWidget *PlatformArea;
     QWidget *freeArea;
 
+    QPushButton *ball;
+    float ball_x = 0.0f;
+    float ball_y = 0.0f;
+    float ball_speed_y = 2.5f;
+    float ball_speed_x = 2.5f;
+
+    time_t time;
+    int frames = 0;
+    unsigned int current_fps = 256;
+
 
     QWidget *gameWindow;
     QMainWindow *mainMenu;
 
 
+
+
+
     bool eventFilter(QObject *object, QEvent *event)
     {
+        //std::cout << std::time(0) << std::endl;
+        if (std::time(0) != this->time){
+            this->time = std::time(0);
+            std::cout << "FPS = " << this->frames << std::endl;
+            this->current_fps = this->frames;
+            this->frames = 0;
+        }
+        else {
+            frames++;
+        }
+
+//        if (m_frameCount == 0) {
+//            m_time.start();
+//        } else {
+//            printf("FPS is %f ms\n", (float)m_time. / float(m_frameCount));
+//        }
+//        m_frameCount++;
+
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_A or keyEvent->key() == Qt::Key_Left) {
@@ -184,6 +217,19 @@ private:
         freeArea->setMaximumSize(QSize(16777215, 128));
         freeArea->setStyleSheet(QString::fromUtf8("background-color: rgb(94, 92, 10);"));
 
+        ball = new QPushButton(GameSpace);
+        ball->setObjectName(QString::fromUtf8("ball"));
+        ball->setGeometry(QRect(270, 0, 32, 32));
+        ball->setMinimumSize(QSize(0, 24));
+        ball->setMaximumSize(QSize(32, 32));
+        ball->setStyleSheet(QString::fromUtf8("   border-style: outset;\n"
+                                              "   border-width: 8px;\n"
+                                              "   border-radius: 16px;\n"
+                                              "   border-color: beige;\n"
+                                              "   padding: 2px;"));
+
+
+
         verticalLayout_2->addWidget(widget_7);
 
 
@@ -203,7 +249,22 @@ private:
         label_2->setText(QCoreApplication::translate("Form", "0000", nullptr));
         label_3->setText(QCoreApplication::translate("Form", "Level :", nullptr));
         label_4->setText(QCoreApplication::translate("Form", "0000", nullptr));
+        ball->setText(QCoreApplication::translate("Form", "*", nullptr));
     } // retranslateUi
+
+    void move_ball(){
+        //QPoint position = this->ball->pos();
+        //position.setY(position.y() - 1);
+        this->ball_y += this->ball_speed_y / (float)this->current_fps;
+        this->ball_x += this->ball_speed_x / (float)this->current_fps;
+        this->ball->setGeometry({
+                                        (int)this->ball_x,
+                                        (int)this->ball_y,
+                                        this->ball->width(),
+                                        this->ball->width()
+        });
+        // std::cout << this->ball->x() << std::endl;
+    }
 
 public:
     void show(){
@@ -219,8 +280,22 @@ public:
         return QWidget::hide();
     }
     void init(auto* window){
+        this->time = std::time(0);
         this->mainMenu = window;
         this->setupUi();
+    }
+
+    void new_game_iteration(){
+        this->move_ball();
+        if (this->ball_y > (float)this->GameSpace->height() - 32.0f)
+            this->ball_speed_y *= -1.0f;
+        if (this->ball_y < 0.0f)
+            this->ball_speed_y *= -1.0f;
+        if (this->ball_x > (float)this->GameSpace->width() - 32.0f)
+            this->ball_speed_x *= -1.0f;
+        if (this->ball_x < 0.0f)
+            this->ball_speed_x *= -1.0f;
+
     }
 
 };

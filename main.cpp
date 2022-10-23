@@ -18,6 +18,16 @@ int main(int argc, char *argv[]) {
     window->show();
 
     window->g_window->show();
+    QApplication::quitOnLastWindowClosed();
+    while (true){
+        QApplication::processEvents();
+        if (!window->g_window->isHidden()){
+            window->g_window->new_game_iteration();
+        }
+
+        if (window->g_window->isHidden() and window->isHidden())
+            exit(0);
+    }
 
     return QApplication::exec();
 }

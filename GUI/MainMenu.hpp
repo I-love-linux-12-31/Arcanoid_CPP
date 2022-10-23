@@ -172,7 +172,7 @@ private:
             if (keyEvent->key() == Qt::Key_Escape and !this->isHidden()) {
                 std::cout << "Exiting..." << std::endl;
                 QApplication::exit(0);
-                // Special tab handling
+                exit(0);
                 return true;
             }
         }
@@ -192,6 +192,7 @@ private:
 void Ui_MainWindow::onExitButtonPush(){
     std::cout << "Exiting..." << std::endl;
     QApplication::exit(0);
+    exit(0);
 };
 
 
