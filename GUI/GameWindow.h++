@@ -58,9 +58,20 @@ private:
     int frames = 0;
     unsigned int current_fps = 256;
 
+    float platform_x = 0.0f;
+    float platform_y = 0.0f;
+    const float PLATFORM_SPEED_START = 5000.0f;
+    float platform_speed = 5000.5f;
+    float platform_speed_multiple = 1.0f;
+
+
+    int platform_weight = 256;
+
+
 
     QWidget *gameWindow;
     QMainWindow *mainMenu;
+    QPushButton *platform;
 
 
 
@@ -89,7 +100,15 @@ private:
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_A or keyEvent->key() == Qt::Key_Left) {
-                std::cout << "Left" << std::endl;
+                this->platform_speed = -1.0f * this->platform_speed_multiple * this->PLATFORM_SPEED_START;
+                this->move_platform();
+                std::cout << "L" << std::endl;
+                return true;
+            }
+            if (keyEvent->key() == Qt::Key_D or keyEvent->key() == Qt::Key_Right) {
+                this->platform_speed = this->platform_speed_multiple * this->PLATFORM_SPEED_START;
+                this->move_platform();
+                std::cout << "R" << std::endl;
                 return true;
             }
             if (keyEvent->key() == Qt::Key_Escape) {
@@ -205,6 +224,12 @@ private:
         PlatformArea->setMinimumSize(QSize(32, 32));
         PlatformArea->setMaximumSize(QSize(16777215, 32));
         PlatformArea->setStyleSheet(QString::fromUtf8("background-color: rgb(97, 53, 13);"));
+
+        platform = new QPushButton(GameSpace);
+        //platform->resize(256, 32);
+        platform->setGeometry(PlatformArea->x(), PlatformArea->y(), 256, 32);
+
+
         freeArea = new QWidget(widget_7);
         freeArea->setObjectName(QString::fromUtf8("freeArea"));
         freeArea->setGeometry(QRect(10, 10, 591, 128));
@@ -255,6 +280,8 @@ private:
     void move_ball(){
         //QPoint position = this->ball->pos();
         //position.setY(position.y() - 1);
+        if (current_fps < 1)
+            current_fps = 1;
         this->ball_y += this->ball_speed_y / (float)this->current_fps;
         this->ball_x += this->ball_speed_x / (float)this->current_fps;
         this->ball->setGeometry({
@@ -264,6 +291,18 @@ private:
                                         this->ball->width()
         });
         // std::cout << this->ball->x() << std::endl;
+    }
+
+    void move_platform(){
+        if (current_fps < 1)
+            current_fps = 1;
+        //this->platform_y += this->platform_speed / (float)this->current_fps;
+        if (this->platform_speed / (float)this->current_fps < 128.0f)
+            this->platform_x += this->platform_speed / (float)this->current_fps;
+        else
+            this->platform_x += 128.0f;
+        this->platform->setGeometry((int)platform_x, (int)platform_y, platform_weight, 32);
+
     }
 
 public:
@@ -283,6 +322,9 @@ public:
         this->time = std::time(0);
         this->mainMenu = window;
         this->setupUi();
+
+        this->platform_y = (float)this->height() - 94.0f;
+        this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
     }
 
     void new_game_iteration(){
@@ -295,6 +337,15 @@ public:
             this->ball_speed_x *= -1.0f;
         if (this->ball_x < 0.0f)
             this->ball_speed_x *= -1.0f;
+
+        if (this->ball_y + 32.0f > this->platform_y and this->ball_x + 0.0f < this->platform_x + this->platform->width() and this->ball_x > this->platform_x){
+            //std::cout<<"Colide" << std::endl;
+            this->ball_speed_y *= -1.0f;
+        }
+
+            //this->ball_speed_y *= -1.0f;
+//        if (this->ball_y < 0.0f)
+//            this->ball_speed_y *= -1.0f;
 
     }
 
