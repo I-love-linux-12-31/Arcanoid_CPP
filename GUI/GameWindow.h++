@@ -15,6 +15,7 @@
 #include <QtCore/QVariant>
 #include <QtCore/QEvent>
 #include <QKeyEvent>
+#include <QGridLayout>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
@@ -22,12 +23,50 @@
 #include <QtWidgets/QWidget>
 #include <QTime>
 #include <QTimer>
+
+#include<vector>
+#include<string>
+
 #include "MainMenu.hpp"
 
 QT_BEGIN_NAMESPACE
 
 #define Form this
 
+
+class TargetBlock : public QPushButton
+{
+    unsigned int level = 1;
+    unsigned int hp = 1;
+    int column = 0, row = 0;
+
+public:
+    bool is_dead(){
+        return this->hp == 0;
+    }
+    void set_level(int &_level){
+        this->level = _level;
+    }
+    void set_hp(int &_hp){
+        this->hp = _hp;
+    }
+    int get_col(){
+        return this->column;
+    }
+    int get_row(){
+        return this->row;
+    }
+    int set_col(int col){
+        this->column = col;
+    }
+    int set_row(int _row){
+        this->row = _row;
+    }
+    void create(int _col, int _row){
+        this->set_col(_col);
+        this->set_row(_row);
+    }
+};
 
 class GameWindow : public QWidget
 {
@@ -73,6 +112,10 @@ private:
     QMainWindow *mainMenu;
     QPushButton *platform;
 
+    QGridLayout *targetsLayout;
+
+    std::vector<std::vector<TargetBlock*>> targets;
+
 
 
 
@@ -96,7 +139,10 @@ private:
 //            printf("FPS is %f ms\n", (float)m_time. / float(m_frameCount));
 //        }
 //        m_frameCount++;
-
+//        if (event->type() == QEvent::Resize){
+//            std::cout << "resizeEvent !2\n";
+//            this->onResize();
+//        }
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_A or keyEvent->key() == Qt::Key_Left) {
@@ -260,6 +306,13 @@ private:
 
         verticalLayout->addWidget(GameSpace);
 
+        targetsLayout = new QGridLayout(targetsArea);
+//        for (auto _row: this->targets){
+//            for (auto target: _row) {
+//                targetsLayout->addWidget(target, target->get_row(), target->get_col());
+//            }
+//        }
+
 
         retranslateUi();
 
@@ -297,14 +350,25 @@ private:
         if (current_fps < 1)
             current_fps = 1;
         //this->platform_y += this->platform_speed / (float)this->current_fps;
-        if (this->platform_speed / (float)this->current_fps < 128.0f)
-            this->platform_x += this->platform_speed / (float)this->current_fps;
+
+        if (this->platform_speed / (float) this->current_fps < 128.0f)
+            this->platform_x += this->platform_speed / (float) this->current_fps;
         else
             this->platform_x += 128.0f;
+
+        if (this->platform_x <= 0.0f)
+            this->platform_x = 0.0f;
+        if (platform_x + (float)this->platform->width() > this->width() - 24.0f)
+            this->platform_x = (float)this->width() - 24.0f - (float)this->platform->width();
         this->platform->setGeometry((int)platform_x, (int)platform_y, platform_weight, 32);
+
 
     }
 
+    void onResize(){
+        this->platform_y = (float)this->height() - 94.0f;
+        this->platform->setGeometry((int)platform_x, (int)platform_y, platform_weight, 32);
+    }
 public:
     void show(){
         if (this->mainMenu != nullptr)
@@ -312,6 +376,13 @@ public:
         this->grabKeyboard();
         this->installEventFilter(this);
         return QWidget::show();
+    }
+
+
+    void resizeEvent(QResizeEvent* event) override{
+        this->onResize();
+        return QWidget::resizeEvent(event);
+
     }
     void hide(){
         this->releaseKeyboard();
@@ -325,6 +396,25 @@ public:
 
         this->platform_y = (float)this->height() - 94.0f;
         this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
+
+
+        for (int row = 0; row < 5;row++){
+            std::vector<TargetBlock*> current_row;
+            for (int col = 0; col < 8;col++){
+                current_row.push_back(new TargetBlock());
+                current_row[current_row.size() - 1]->set_row(row);
+                current_row[current_row.size() - 1]->set_col(col);
+
+                targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
+
+            }
+        }
+
+
+
+
+
+
     }
 
     void new_game_iteration(){
