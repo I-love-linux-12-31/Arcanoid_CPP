@@ -33,6 +33,8 @@ QT_BEGIN_NAMESPACE
 
 #define Form this
 
+int score = 0;
+
 
 class TargetBlock : public QPushButton
 {
@@ -62,6 +64,11 @@ public:
     int set_row(int _row){
         this->row = _row;
     }
+    void kill_target(){
+        this->hp = 0;
+        //this->setStyleSheet(" background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,     stop: 0 rgba(68, 8, 8, 175), stop: 1 rgba(68, 8, 8, 175));");
+        this->hide();
+    }
     void create(int _col, int _row){
         this->set_col(_col);
         this->set_row(_row);
@@ -88,10 +95,13 @@ private:
     QWidget *freeArea;
 
     QPushButton *ball;
-    float ball_x = 0.0f;
-    float ball_y = 0.0f;
-    float ball_speed_y = 2.5f;
-    float ball_speed_x = 2.5f;
+    float ball_x = 256.0f;
+    float ball_y = 512.0f;
+
+    const float BALL_SPEED_START = 16.0f;
+    float ball_speed_y = BALL_SPEED_START;
+    float ball_speed_x = BALL_SPEED_START;
+    const float BALL_SIZE = 16.0f;
 
     time_t time;
     int frames = 0;
@@ -99,7 +109,7 @@ private:
 
     float platform_x = 0.0f;
     float platform_y = 0.0f;
-    const float PLATFORM_SPEED_START = 5000.0f;
+    const float PLATFORM_SPEED_START = 10000.0f;
     float platform_speed = 5000.5f;
     float platform_speed_multiple = 1.0f;
 
@@ -290,12 +300,12 @@ private:
 
         ball = new QPushButton(GameSpace);
         ball->setObjectName(QString::fromUtf8("ball"));
-        ball->setGeometry(QRect(270, 0, 32, 32));
-        ball->setMinimumSize(QSize(0, 24));
-        ball->setMaximumSize(QSize(32, 32));
+        ball->setGeometry(QRect(256, 256, BALL_SIZE, BALL_SIZE));
+        ball->setMinimumSize(QSize(16, 16));
+        ball->setMaximumSize(QSize(BALL_SIZE, BALL_SIZE));
         ball->setStyleSheet(QString::fromUtf8("   border-style: outset;\n"
-                                              "   border-width: 8px;\n"
-                                              "   border-radius: 16px;\n"
+                                              "   border-width: 2px;\n"
+                                              "   border-radius: 8px;\n"
                                               "   border-color: beige;\n"
                                               "   padding: 2px;"));
 
@@ -334,7 +344,7 @@ private:
         //QPoint position = this->ball->pos();
         //position.setY(position.y() - 1);
         if (current_fps < 1)
-            current_fps = 1;
+            current_fps = 256;
         this->ball_y += this->ball_speed_y / (float)this->current_fps;
         this->ball_x += this->ball_speed_x / (float)this->current_fps;
         this->ball->setGeometry({
@@ -348,7 +358,7 @@ private:
 
     void move_platform(){
         if (current_fps < 1)
-            current_fps = 1;
+            current_fps = 256;
         //this->platform_y += this->platform_speed / (float)this->current_fps;
 
         if (this->platform_speed / (float) this->current_fps < 128.0f)
@@ -398,16 +408,23 @@ public:
         this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
 
 
-        for (int row = 0; row < 5;row++){
+        for (int row = 0; row < 12;row++){
             std::vector<TargetBlock*> current_row;
-            for (int col = 0; col < 8;col++){
+            for (int col = 0; col < 12;col++){
                 current_row.push_back(new TargetBlock());
                 current_row[current_row.size() - 1]->set_row(row);
                 current_row[current_row.size() - 1]->set_col(col);
+                current_row[current_row.size() - 1]->setParent(this->GameSpace);
+                float dy = (float)(this->GameSpace->height()) / (float)(12) * 1.3f;
+                float dx = (float)(this->GameSpace->width()) / (float)(12) * 1.1f;
+                float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 16;
+                float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 16;
+                current_row[current_row.size() - 1]->setGeometry(pos_x, pos_y, dx, dy);
 
-                targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
+                //this->targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
 
             }
+            this->targets.push_back(current_row);
         }
 
 
@@ -416,26 +433,45 @@ public:
 
 
     }
-
-    void new_game_iteration(){
-        this->move_ball();
-        if (this->ball_y > (float)this->GameSpace->height() - 32.0f)
+    void process_ball_collisions(){
+        if (this->ball_y > (float)this->GameSpace->height() - BALL_SIZE)
             this->ball_speed_y *= -1.0f;
         if (this->ball_y < 0.0f)
             this->ball_speed_y *= -1.0f;
-        if (this->ball_x > (float)this->GameSpace->width() - 32.0f)
+        if (this->ball_x > (float)this->GameSpace->width() - BALL_SIZE)
             this->ball_speed_x *= -1.0f;
         if (this->ball_x < 0.0f)
             this->ball_speed_x *= -1.0f;
 
-        if (this->ball_y + 32.0f > this->platform_y and this->ball_x + 0.0f < this->platform_x + this->platform->width() and this->ball_x > this->platform_x){
+        if (this->ball_y + BALL_SIZE > this->platform_y and this->ball_x + 0.0f < this->platform_x + this->platform->width() and this->ball_x > this->platform_x){
             //std::cout<<"Colide" << std::endl;
             this->ball_speed_y *= -1.0f;
         }
 
-            //this->ball_speed_y *= -1.0f;
-//        if (this->ball_y < 0.0f)
-//            this->ball_speed_y *= -1.0f;
+        for (auto row : this->targets){
+            for (auto target : row){
+
+                if (!target->is_dead()) {
+                    if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x < target->x() + target->width() and
+                        this->ball_x > target->x()) {
+                        //target->setText("X");
+                        target->kill_target();
+                        score += 1;
+                        this->label_2->setText(std::to_string(score).c_str());
+                        this->ball_speed_y *= -1.0f;
+                    }
+                }
+
+            }
+        }
+
+    }
+
+
+    void new_game_iteration(){
+        this->process_ball_collisions();
+        this->move_ball();
+
 
     }
 
