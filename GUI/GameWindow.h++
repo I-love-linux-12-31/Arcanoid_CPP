@@ -28,6 +28,7 @@
 #include<string>
 
 #include "MainMenu.hpp"
+#include "../fps_control.h++"
 
 QT_BEGIN_NAMESPACE
 
@@ -98,7 +99,7 @@ private:
     float ball_x = 256.0f;
     float ball_y = 512.0f;
 
-    const float BALL_SPEED_START = 16.0f;
+    const float BALL_SPEED_START = 128.0f;
     float ball_speed_y = BALL_SPEED_START;
     float ball_speed_x = BALL_SPEED_START;
     const float BALL_SIZE = 16.0f;
@@ -345,15 +346,16 @@ private:
         //position.setY(position.y() - 1);
         if (current_fps < 1)
             current_fps = 256;
-        this->ball_y += this->ball_speed_y / (float)this->current_fps;
-        this->ball_x += this->ball_speed_x / (float)this->current_fps;
+        //std::cout << this->ball->x() << "//" << this->ball->y() << std::endl;
+        this->ball_y += this->ball_speed_y / (float)get_main_thread_fps();
+        this->ball_x += this->ball_speed_x / (float)get_main_thread_fps();
         this->ball->setGeometry({
                                         (int)this->ball_x,
                                         (int)this->ball_y,
                                         this->ball->width(),
                                         this->ball->width()
         });
-        // std::cout << this->ball->x() << std::endl;
+        //std::cout << this->ball->x() << "/" << this->ball->y() << std::endl;
     }
 
     void move_platform(){
@@ -376,8 +378,20 @@ private:
     }
 
     void onResize(){
+        std::cout << "onResize !\n";
         this->platform_y = (float)this->height() - 94.0f;
         this->platform->setGeometry((int)platform_x, (int)platform_y, platform_weight, 32);
+
+
+        for (auto block : this->targets){
+            for (auto target : block){
+                float dy = (float)(this->GameSpace->height() - 256 - 8) / (float)(12) * 1.1f;
+                float dx = (float)(this->GameSpace->width() - 8) / (float)(12) * 1.0f;
+                float pos_y = (float)target->get_row() * dy + 4;
+                float pos_x = (float)target->get_col() * dx + 4;
+                target->setGeometry(pos_x, pos_y, dx, dy);
+            }
+        }
     }
 public:
     void show(){
@@ -415,10 +429,10 @@ public:
                 current_row[current_row.size() - 1]->set_row(row);
                 current_row[current_row.size() - 1]->set_col(col);
                 current_row[current_row.size() - 1]->setParent(this->GameSpace);
-                float dy = (float)(this->GameSpace->height()) / (float)(12) * 1.3f;
-                float dx = (float)(this->GameSpace->width()) / (float)(12) * 1.1f;
-                float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 16;
-                float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 16;
+                float dy = (float)(this->GameSpace->height() - 128 - 8) / (float)(12) * 1.1f;
+                float dx = (float)(this->GameSpace->width() - 8) / (float)(12) * 1.0f;
+                float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 4;
+                float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 4;
                 current_row[current_row.size() - 1]->setGeometry(pos_x, pos_y, dx, dy);
 
                 //this->targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
@@ -434,6 +448,7 @@ public:
 
     }
     void process_ball_collisions(){
+        // Walls
         if (this->ball_y > (float)this->GameSpace->height() - BALL_SIZE)
             this->ball_speed_y *= -1.0f;
         if (this->ball_y < 0.0f)
@@ -443,23 +458,52 @@ public:
         if (this->ball_x < 0.0f)
             this->ball_speed_x *= -1.0f;
 
+        // Platform
         if (this->ball_y + BALL_SIZE > this->platform_y and this->ball_x + 0.0f < this->platform_x + this->platform->width() and this->ball_x > this->platform_x){
             //std::cout<<"Colide" << std::endl;
             this->ball_speed_y *= -1.0f;
         }
+        if (
+                (this->ball_y + BALL_SIZE / 2 > this->platform_y and this->ball_y + BALL_SIZE / 2 < this->platform_y + this->platform->height()
+                 and this->ball_x + BALL_SIZE > this->platform_x and this->ball_x < this->platform_x)
+                or
+                (this->ball_y + BALL_SIZE / 2 > this->platform_y and this->ball_y + BALL_SIZE / 2 < this->platform_y + this->platform->height()
+                 and this->ball_x + BALL_SIZE > this->platform_x + this->platform->width() and this->ball_x < this->platform_x + this->platform->width())
+                ) {
 
+            this->ball_speed_x *= -1.0f;
+        }
+
+        // blocks
         for (auto row : this->targets){
             for (auto target : row){
 
                 if (!target->is_dead()) {
-                    if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x < target->x() + target->width() and
-                        this->ball_x > target->x()) {
+                    // Vertical
+                    if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
+                        this->ball_x + BALL_SIZE / 2 > target->x()) {
                         //target->setText("X");
                         target->kill_target();
                         score += 1;
                         this->label_2->setText(std::to_string(score).c_str());
                         this->ball_speed_y *= -1.0f;
                     }
+                    // Horizont
+                    if (
+                            (this->ball_y + BALL_SIZE / 2 > target->y() and this->ball_y + BALL_SIZE / 2 < target->y() + target->height()
+                            and this->ball_x + BALL_SIZE > target->x() and this->ball_x < target->x())
+                            or
+                            (this->ball_y + BALL_SIZE / 2 > target->y() and this->ball_y + BALL_SIZE / 2 < target->y() + target->height()
+                             and this->ball_x + BALL_SIZE > target->x() + target->width() and this->ball_x < target->x() + target->width())
+                    ) {
+                        //target->setText("X");
+                        target->kill_target();
+                        score += 1;
+                        this->label_2->setText(std::to_string(score).c_str());
+                        this->ball_speed_x *= -1.0f;
+                    }
+
+
                 }
 
             }

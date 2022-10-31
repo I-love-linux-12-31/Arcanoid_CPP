@@ -1,11 +1,26 @@
 #include <QApplication>
 #include <QPushButton>
 #include <iostream>
-
 #include "./GUI/GUI.h++"
+#include "./fps_control.h++"
+
+#include <ctime>
 
 Ui_MainWindow* window;
 
+
+void enter_main_loop()
+{
+    while (true){
+        QApplication::processEvents();
+        next_frame();
+        if (!window->g_window->isHidden()){
+            window->g_window->new_game_iteration();
+        }
+        if (window->g_window->isHidden() and window->isHidden())
+            exit(0);
+    }
+}
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     window = new Ui_MainWindow();
@@ -19,15 +34,7 @@ int main(int argc, char *argv[]) {
 
     window->g_window->show();
     QApplication::quitOnLastWindowClosed();
-    while (true){
-        QApplication::processEvents();
-        if (!window->g_window->isHidden()){
-            window->g_window->new_game_iteration();
-        }
-
-        if (window->g_window->isHidden() and window->isHidden())
-            exit(0);
-    }
-
-    return QApplication::exec();
+    enter_main_loop();
+    return 0;
+    //return QApplication::exec();
 }
