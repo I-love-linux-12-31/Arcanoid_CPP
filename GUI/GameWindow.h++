@@ -59,10 +59,10 @@ public:
     int get_row(){
         return this->row;
     }
-    int set_col(int col){
+    void set_col(int col){
         this->column = col;
     }
-    int set_row(int _row){
+    void set_row(int _row){
         this->row = _row;
     }
     void kill_target(){
@@ -393,6 +393,46 @@ private:
             }
         }
     }
+
+    void create_demo_blocks(){
+        for (int row = 0; row < 12;row++){
+            std::vector<TargetBlock*> current_row;
+            for (int col = 0; col < 12;col++){
+                current_row.push_back(new TargetBlock());
+                current_row[current_row.size() - 1]->set_row(row);
+                current_row[current_row.size() - 1]->set_col(col);
+                current_row[current_row.size() - 1]->setParent(this->GameSpace);
+                float dy = (float)(this->GameSpace->height() - 128 - 8) / (float)(12) * 1.1f;
+                float dx = (float)(this->GameSpace->width() - 8) / (float)(12) * 1.0f;
+                float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 4;
+                float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 4;
+                current_row[current_row.size() - 1]->setGeometry(pos_x, pos_y, dx, dy);
+
+                //this->targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
+
+            }
+            this->targets.push_back(current_row);
+        }
+    }
+
+    void wipe_targets_data(){
+        // todo : Lock main game thread ?!!!
+        int new_hp = 1;
+        for (auto block : this->targets){
+//            while (!block.empty()){
+//                delete block[0];
+//                block.erase(block.begin());
+//            }
+
+            for (auto* element : block){
+                element->set_hp(new_hp);
+                element->show();
+
+            }
+        }
+
+
+    }
 public:
     void show(){
         if (this->mainMenu != nullptr)
@@ -421,31 +461,7 @@ public:
         this->platform_y = (float)this->height() - 94.0f;
         this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
 
-
-        for (int row = 0; row < 12;row++){
-            std::vector<TargetBlock*> current_row;
-            for (int col = 0; col < 12;col++){
-                current_row.push_back(new TargetBlock());
-                current_row[current_row.size() - 1]->set_row(row);
-                current_row[current_row.size() - 1]->set_col(col);
-                current_row[current_row.size() - 1]->setParent(this->GameSpace);
-                float dy = (float)(this->GameSpace->height() - 128 - 8) / (float)(12) * 1.1f;
-                float dx = (float)(this->GameSpace->width() - 8) / (float)(12) * 1.0f;
-                float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 4;
-                float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 4;
-                current_row[current_row.size() - 1]->setGeometry(pos_x, pos_y, dx, dy);
-
-                //this->targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
-
-            }
-            this->targets.push_back(current_row);
-        }
-
-
-
-
-
-
+        this->create_demo_blocks();
     }
     void process_ball_collisions(){
         // Walls
@@ -477,7 +493,6 @@ public:
         // blocks
         for (auto row : this->targets){
             for (auto target : row){
-
                 if (!target->is_dead()) {
                     // Vertical
                     if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
@@ -517,6 +532,19 @@ public:
         this->move_ball();
 
 
+    }
+
+    void rest_game(){
+        this->wipe_targets_data();
+
+
+        this->ball_x = 256.0f;
+        this->ball_y = 512.0f;
+
+        // create_demo_blocks();
+        // delete &this->targets;
+
+        // this->resizeEvent(nullptr);
     }
 
 };
