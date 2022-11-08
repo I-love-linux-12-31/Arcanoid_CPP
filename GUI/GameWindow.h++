@@ -44,14 +44,47 @@ class TargetBlock : public QPushButton
     int column = 0, row = 0;
 
 public:
+    void hit_block(){
+        this->hp -= 1;
+        if (this->hp < 1){
+            score += (int)this->level;
+            this->kill_target();
+        }
+        this->update_color();
+    }
+    void update_color(){
+        std::string _color_a = "68, 8, 8, 175";
+        std::string _color_b = "68, 8, 8, 175";
+        switch (this->hp) {
+            case 1:
+                _color_a = "128, 128, 128, 175";
+                _color_b = _color_a;
+                break;
+            case 2:
+                _color_a = "180, 180, 60, 175";
+                _color_b = _color_a;
+                break;
+            case 3:
+                _color_a = "220, 220, 70, 175";
+                _color_b = _color_a;
+                break;
+            default:
+                this->setStyleSheet("");
+                return;
+                break;
+
+        }
+        this->setStyleSheet((" background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,     stop: 0 rgba(" + _color_a + "), stop: 1 rgba(" + _color_b + "));").c_str());
+    }
     bool is_dead(){
         return this->hp == 0;
     }
     void set_level(int &_level){
         this->level = _level;
     }
-    void set_hp(int &_hp){
+    void set_hp(int _hp){
         this->hp = _hp;
+        this->update_color();
     }
     int get_col(){
         return this->column;
@@ -384,11 +417,11 @@ private:
 
 
         for (auto block : this->targets){
-            for (auto target : block){
-                float dy = (float)(this->GameSpace->height() - 256 - 8) / (float)(12) * 1.1f;
-                float dx = (float)(this->GameSpace->width() - 8) / (float)(12) * 1.0f;
-                float pos_y = (float)target->get_row() * dy + 4;
-                float pos_x = (float)target->get_col() * dx + 4;
+            for (auto target : block) {
+                float dy = (float) (this->GameSpace->height() - 256 - 8) / (float) (12) * 1.1f;
+                float dx = (float) (this->GameSpace->width() - 8) / (float) (12) * 1.0f;
+                float pos_y = (float) target->get_row() * dy + 4;
+                float pos_x = (float) target->get_col() * dx + 4;
                 target->setGeometry(pos_x, pos_y, dx, dy);
             }
         }
@@ -399,6 +432,7 @@ private:
             std::vector<TargetBlock*> current_row;
             for (int col = 0; col < 12;col++){
                 current_row.push_back(new TargetBlock());
+                current_row[current_row.size() - 1]->set_hp(3);
                 current_row[current_row.size() - 1]->set_row(row);
                 current_row[current_row.size() - 1]->set_col(col);
                 current_row[current_row.size() - 1]->setParent(this->GameSpace);
@@ -417,7 +451,7 @@ private:
 
     void wipe_targets_data(){
         // todo : Lock main game thread ?!!!
-        int new_hp = 1;
+        int new_hp = 4;
         for (auto block : this->targets){
 //            while (!block.empty()){
 //                delete block[0];
@@ -464,6 +498,7 @@ public:
         this->create_demo_blocks();
     }
     void process_ball_collisions(){
+        bool next_move_required = false;
         // Walls
         if (this->ball_y > (float)this->GameSpace->height() - BALL_SIZE)
             this->ball_speed_y *= -1.0f;
@@ -478,6 +513,7 @@ public:
         if (this->ball_y + BALL_SIZE > this->platform_y and this->ball_x + 0.0f < this->platform_x + this->platform->width() and this->ball_x > this->platform_x){
             //std::cout<<"Colide" << std::endl;
             this->ball_speed_y *= -1.0f;
+            next_move_required = true;
         }
         if (
                 (this->ball_y + BALL_SIZE / 2 > this->platform_y and this->ball_y + BALL_SIZE / 2 < this->platform_y + this->platform->height()
@@ -498,10 +534,12 @@ public:
                     if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
                         this->ball_x + BALL_SIZE / 2 > target->x()) {
                         //target->setText("X");
-                        target->kill_target();
-                        score += 1;
+                        target->hit_block();
+                        //target->kill_target();
+                        //score += 1;
                         this->label_2->setText(std::to_string(score).c_str());
                         this->ball_speed_y *= -1.0f;
+                        next_move_required = true;
                     }
                     // Horizont
                     if (
@@ -512,16 +550,23 @@ public:
                              and this->ball_x + BALL_SIZE > target->x() + target->width() and this->ball_x < target->x() + target->width())
                     ) {
                         //target->setText("X");
-                        target->kill_target();
-                        score += 1;
+                        //target->kill_target();
+                        //score += 1;
+                        target->hit_block();
                         this->label_2->setText(std::to_string(score).c_str());
                         this->ball_speed_x *= -1.0f;
+                        next_move_required = true;
                     }
 
 
                 }
 
             }
+        }
+        if (next_move_required){
+            //this->move_ball();
+            this->move_ball();
+            next_move_required = false;
         }
 
     }

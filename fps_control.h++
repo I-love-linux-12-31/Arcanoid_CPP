@@ -39,8 +39,8 @@ bool next_frame_more_target(){
 }
 
 unsigned int get_main_thread_fps(){
-    if (current_fps < 8){
-        return 16;
+    if (current_fps < 32){
+        return 32;
     }
     return current_fps;
 }
