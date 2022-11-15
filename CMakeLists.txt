@@ -13,7 +13,15 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(Arcanoid_cpp main.cpp ./GUI/GUI.h++ ./GUI/MainMenu.hpp ./GUI/GameWindow.h++ ./GUI/UIElements.h++ fps_control.h++)
+add_executable(Arcanoid_cpp
+        main.cpp
+        ./GUI/GUI.h++
+        ./GUI/MainMenu.hpp
+        ./GUI/GameWindow.h++
+        ./GUI/UIElements.h++
+        fps_control.h++
+        random.h++
+        )
 target_link_libraries(Arcanoid_cpp
         Qt::Core
         Qt::Gui

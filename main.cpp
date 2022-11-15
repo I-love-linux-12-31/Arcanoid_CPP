@@ -34,6 +34,9 @@ int main(int argc, char *argv[]) {
 
     window->g_window->show();
     QApplication::quitOnLastWindowClosed();
+
+
+
     enter_main_loop();
     return 0;
     //return QApplication::exec();

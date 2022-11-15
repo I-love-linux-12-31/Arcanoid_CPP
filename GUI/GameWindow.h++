@@ -29,6 +29,7 @@
 
 #include "MainMenu.hpp"
 #include "../fps_control.h++"
+#include "../random.h++"
 
 QT_BEGIN_NAMESPACE
 
@@ -450,8 +451,9 @@ private:
     }
 
     void wipe_targets_data(){
+        score = 0;
         // todo : Lock main game thread ?!!!
-        int new_hp = 4;
+       // int new_hp = randint(1, 4);
         for (auto block : this->targets){
 //            while (!block.empty()){
 //                delete block[0];
@@ -459,7 +461,7 @@ private:
 //            }
 
             for (auto* element : block){
-                element->set_hp(new_hp);
+                element->set_hp(randint(1, 4));
                 element->show();
 
             }
