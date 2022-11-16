@@ -37,8 +37,14 @@ class TargetBlock : public QPushButton
     unsigned int level = 1;
     unsigned int hp = 1;
     int column = 0, row = 0;
-
+    bool bonus = false;
 public:
+    bool is_bonus(){
+        return this->bonus;
+    }
+    void set_bonus(bool status){
+        this->bonus = status;
+    }
     void hit_block(){
         this->hp -= 1;
         if (this->hp < 1){
@@ -56,20 +62,27 @@ public:
                 this->setStyleSheet("");
                 return;
             case 1:
-                _color_a = "128, 128, 128, 175";
+                if (this->is_bonus())
+                    _color_a = "255, 255, 255, 229";
+                else
+                    _color_a = "135, 184, 128, 229";
                 _color_b = _color_a;
                 break;
             case 2:
-                _color_a = "180, 180, 60, 175";
+                if (this->is_bonus())
+                    _color_a = "0, 255, 245, 229";
+                else
+                    _color_a = "2, 65, 255, 175";
                 _color_b = _color_a;
                 break;
             case 3:
-                _color_a = "220, 220, 70, 175";
+                _color_a = "92, 255, 2, 175";
                 _color_b = _color_a;
                 break;
             default:
-                this->setStyleSheet("");
-                return;
+                _color_a = "0, 0, 0, 255";
+                _color_b = _color_a;
+                break;
 
         }
         this->show();
@@ -431,7 +444,7 @@ private:
             std::vector<TargetBlock*> current_row;
             for (int col = 0; col < 12;col++){
                 current_row.push_back(new TargetBlock());
-                current_row[current_row.size() - 1]->set_hp(3);
+                current_row[current_row.size() - 1]->set_hp(-1);
                 current_row[current_row.size() - 1]->set_row(row);
                 current_row[current_row.size() - 1]->set_col(col);
                 current_row[current_row.size() - 1]->setParent(this->GameSpace);
@@ -477,7 +490,12 @@ private:
             for (int j = 0 ; j < this->targets[i].size(); j++){
                 if (j >= data[i].size())
                     continue;
-                this->targets[i][j]->set_hp(data[i][j]);
+                if (data[i][j] >= 0)
+                    this->targets[i][j]->set_hp(data[i][j]);
+                else {
+                    this->targets[i][j]->set_bonus(true);
+                    this->targets[i][j]->set_hp(data[i][j] * -1);
+                }
 
             }
         }
@@ -514,8 +532,8 @@ public:
         this->wipe_targets_data();
 
         std::cout << "Level path :" << std::endl;
-        std::string file_path;
-        std::cin >> file_path;
+        std::string file_path = "../levels/level_b01.level";
+        //std::cin >> file_path;
         load_level_data(file_path);
     }
     void process_ball_collisions(){
@@ -603,8 +621,8 @@ public:
     void rest_game(){
         this->wipe_targets_data();
         std::cout << "Level path :" << std::endl;
-        std::string file_path;
-        std::cin >> file_path;
+        std::string file_path = "../levels/level_b01.level";
+        //std::cin >> file_path;
         load_level_data(file_path);
 
 
