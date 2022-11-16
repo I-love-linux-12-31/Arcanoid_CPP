@@ -21,6 +21,7 @@ add_executable(Arcanoid_cpp
         ./GUI/UIElements.h++
         fps_control.h++
         random.h++
+        level_files_handler.h++
         )
 target_link_libraries(Arcanoid_cpp
         Qt::Core

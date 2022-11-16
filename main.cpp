@@ -4,6 +4,8 @@
 #include "./GUI/GUI.h++"
 #include "./fps_control.h++"
 
+#include "./level_files_handler.h++"
+
 #include <ctime>
 
 Ui_MainWindow* window;

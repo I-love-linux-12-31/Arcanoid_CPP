@@ -4,13 +4,6 @@
 
 #ifndef ARCANOID_CPP_GAMEWINDOW_HPP
 #define ARCANOID_CPP_GAMEWINDOW_HPP
-/********************************************************************************
-** Form generated from reading UI file 'game_windowuurkpL.ui'
-**
-** Created by: Qt User Interface Compiler version 6.3.1
-**
-** WARNING! All changes made in this file will be lost when recompiling UI file!
-********************************************************************************/
 
 #include <QtCore/QVariant>
 #include <QtCore/QEvent>
@@ -30,6 +23,7 @@
 #include "MainMenu.hpp"
 #include "../fps_control.h++"
 #include "../random.h++"
+#include "../level_files_handler.h++"
 
 QT_BEGIN_NAMESPACE
 
@@ -57,6 +51,10 @@ public:
         std::string _color_a = "68, 8, 8, 175";
         std::string _color_b = "68, 8, 8, 175";
         switch (this->hp) {
+            case 0:
+                this->hide();
+                this->setStyleSheet("");
+                return;
             case 1:
                 _color_a = "128, 128, 128, 175";
                 _color_b = _color_a;
@@ -72,9 +70,9 @@ public:
             default:
                 this->setStyleSheet("");
                 return;
-                break;
 
         }
+        this->show();
         this->setStyleSheet((" background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,     stop: 0 rgba(" + _color_a + "), stop: 1 rgba(" + _color_b + "));").c_str());
     }
     bool is_dead(){
@@ -461,13 +459,28 @@ private:
 //            }
 
             for (auto* element : block){
-                element->set_hp(randint(1, 4));
-                element->show();
+                element->set_hp(0); // randint(1, 4)
+                element->update_color();
 
             }
         }
 
 
+    }
+    void load_level_data(std::string &file_path)
+    {
+        std::vector<std::vector<int>> data = get_map(file_path);
+        for (int i = 0 ; i < this->targets.size(); i++){
+            if (i >= data.size())
+                continue;
+
+            for (int j = 0 ; j < this->targets[i].size(); j++){
+                if (j >= data[i].size())
+                    continue;
+                this->targets[i][j]->set_hp(data[i][j]);
+
+            }
+        }
     }
 public:
     void show(){
@@ -498,6 +511,12 @@ public:
         this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
 
         this->create_demo_blocks();
+        this->wipe_targets_data();
+
+        std::cout << "Level path :" << std::endl;
+        std::string file_path;
+        std::cin >> file_path;
+        load_level_data(file_path);
     }
     void process_ball_collisions(){
         bool next_move_required = false;
@@ -583,6 +602,10 @@ public:
 
     void rest_game(){
         this->wipe_targets_data();
+        std::cout << "Level path :" << std::endl;
+        std::string file_path;
+        std::cin >> file_path;
+        load_level_data(file_path);
 
 
         this->ball_x = 256.0f;
