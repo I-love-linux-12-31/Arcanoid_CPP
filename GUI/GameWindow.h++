@@ -308,28 +308,6 @@ private:
         ball->setText(QCoreApplication::translate("Form", "*", nullptr));
     } // retranslateUi
 
-    //todo delete this!
-    /*
-    void move_ball(){
-
-        //QPoint position = this->ball->pos();
-        //position.setY(position.y() - 1);
-        if (current_fps < 1)
-            current_fps = 256;
-        //std::cout << this->ball->x() << "//" << this->ball->y() << std::endl;
-        this->ball_y += this->ball_speed_y / (float)get_main_thread_fps();
-        this->ball_x += this->ball_speed_x / (float)get_main_thread_fps();
-        this->ball->setGeometry({
-                                        (int)this->ball_x,
-                                        (int)this->ball_y,
-                                        this->ball->width(),
-                                        this->ball->width()
-        });
-        //std::cout << this->ball->x() << "/" << this->ball->y() << std::endl;
-
-
-    }
-*/
     void move_platform(){
         if (current_fps < 1)
             current_fps = 256;
@@ -466,81 +444,6 @@ public:
         //std::cin >> file_path;
         load_level_data(file_path);
     }
-    /* todo delete this!
-    void process_ball_collisions(){
-        bool next_move_required = false;
-        // Walls
-        if (this->ball_y > (float)this->GameSpace->height() - BALL_SIZE)
-            this->ball_speed_y *= -1.0f;
-        if (this->ball_y < 0.0f)
-            this->ball_speed_y *= -1.0f;
-        if (this->ball_x > (float)this->GameSpace->width() - BALL_SIZE)
-            this->ball_speed_x *= -1.0f;
-        if (this->ball_x < 0.0f)
-            this->ball_speed_x *= -1.0f;
-
-        // Platform
-        if (this->ball_y + BALL_SIZE > this->platform_y and this->ball_x + 0.0f < this->platform_x + this->platform->width() and this->ball_x > this->platform_x){
-            //std::cout<<"Colide" << std::endl;
-            this->ball_speed_y *= -1.0f;
-            next_move_required = true;
-        }
-        if (
-                (this->ball_y + BALL_SIZE / 2 > this->platform_y and this->ball_y + BALL_SIZE / 2 < this->platform_y + this->platform->height()
-                 and this->ball_x + BALL_SIZE > this->platform_x and this->ball_x < this->platform_x)
-                or
-                (this->ball_y + BALL_SIZE / 2 > this->platform_y and this->ball_y + BALL_SIZE / 2 < this->platform_y + this->platform->height()
-                 and this->ball_x + BALL_SIZE > this->platform_x + this->platform->width() and this->ball_x < this->platform_x + this->platform->width())
-                ) {
-
-            this->ball_speed_x *= -1.0f;
-        }
-
-        // blocks
-        for (auto row : this->targets){
-            for (auto target : row){
-                if (!target->is_dead()) {
-                    // Vertical
-                    if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
-                        this->ball_x + BALL_SIZE / 2 > target->x()) {
-                        //target->setText("X");
-                        target->hit_block();
-                        //target->kill_target();
-                        //score += 1;
-                        this->label_2->setText(std::to_string(score).c_str());
-                        this->ball_speed_y *= -1.0f;
-                        next_move_required = true;
-                    }
-                    // Horizont
-                    if (
-                            (this->ball_y + BALL_SIZE / 2 > target->y() and this->ball_y + BALL_SIZE / 2 < target->y() + target->height()
-                            and this->ball_x + BALL_SIZE > target->x() and this->ball_x < target->x())
-                            or
-                            (this->ball_y + BALL_SIZE / 2 > target->y() and this->ball_y + BALL_SIZE / 2 < target->y() + target->height()
-                             and this->ball_x + BALL_SIZE > target->x() + target->width() and this->ball_x < target->x() + target->width())
-                    ) {
-                        //target->setText("X");
-                        //target->kill_target();
-                        //score += 1;
-                        target->hit_block();
-                        this->label_2->setText(std::to_string(score).c_str());
-                        this->ball_speed_x *= -1.0f;
-                        next_move_required = true;
-                    }
-
-
-                }
-
-            }
-        }
-        if (next_move_required){
-            //this->move_ball();
-            this->move_ball();
-            next_move_required = false;
-        }
-
-    }
-    */
 
     void new_game_iteration(){
         //this->process_ball_collisions();
