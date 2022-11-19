@@ -28,17 +28,19 @@
 
 #include "Ball.hpp"
 #include "TargetBlock.hpp"
+#include "Bonuses.hpp"
 
 QT_BEGIN_NAMESPACE
 
 #define Form this
 
-
+const bool DEBUG_BACKGROUND = false;
 
 
 class GameWindow : public QWidget
 {
 public:
+    std::vector<Bonus*> bonuses;
     QWidget *GameSpace;
     float platform_x = 0.0f;
     float platform_y = 0.0f;
@@ -122,13 +124,11 @@ private:
             if (keyEvent->key() == Qt::Key_A or keyEvent->key() == Qt::Key_Left) {
                 this->platform_speed = -1.0f * this->platform_speed_multiple * PLATFORM_SPEED_START;
                 this->move_platform();
-                std::cout << "L" << std::endl;
                 return true;
             }
             if (keyEvent->key() == Qt::Key_D or keyEvent->key() == Qt::Key_Right) {
                 this->platform_speed = this->platform_speed_multiple * PLATFORM_SPEED_START;
                 this->move_platform();
-                std::cout << "R" << std::endl;
                 return true;
             }
             if (keyEvent->key() == Qt::Key_Escape) {
@@ -206,14 +206,16 @@ private:
         sizePolicy2.setHeightForWidth(GameSpace->sizePolicy().hasHeightForWidth());
         GameSpace->setSizePolicy(sizePolicy2);
         GameSpace->setMinimumSize(QSize(512, 256));
-        GameSpace->setStyleSheet(QString::fromUtf8("background-color: rgba(51, 209, 122, 25);"));
+        if (DEBUG_BACKGROUND)
+            GameSpace->setStyleSheet(QString::fromUtf8("background-color: rgba(51, 209, 122, 25);"));
         verticalLayout_2 = new QVBoxLayout(GameSpace);
         verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
         targetsArea = new QWidget(GameSpace);
         targetsArea->setObjectName(QString::fromUtf8("targetsArea"));
         sizePolicy2.setHeightForWidth(targetsArea->sizePolicy().hasHeightForWidth());
         targetsArea->setSizePolicy(sizePolicy2);
-        targetsArea->setStyleSheet(QString::fromUtf8("background-color: rgba(64, 155, 191, 52);"));
+        if (DEBUG_BACKGROUND)
+            targetsArea->setStyleSheet(QString::fromUtf8("background-color: rgba(64, 155, 191, 52);"));
 
         verticalLayout_2->addWidget(targetsArea);
 
@@ -235,7 +237,8 @@ private:
         widget_5->setSizePolicy(sizePolicy4);
         widget_5->setMinimumSize(QSize(16, 16));
         widget_5->setMaximumSize(QSize(16777215, 16));
-        widget_5->setStyleSheet(QString::fromUtf8("background-color: rgba(68, 8, 8, 175);"));
+        if (DEBUG_BACKGROUND)
+            widget_5->setStyleSheet(QString::fromUtf8("background-color: rgba(68, 8, 8, 175);"));
         PlatformArea = new QWidget(widget_7);
         PlatformArea->setObjectName(QString::fromUtf8("PlatformArea"));
         PlatformArea->setGeometry(QRect(6, 144, 591, 32));
@@ -243,7 +246,8 @@ private:
         PlatformArea->setSizePolicy(sizePolicy4);
         PlatformArea->setMinimumSize(QSize(32, 32));
         PlatformArea->setMaximumSize(QSize(16777215, 32));
-        PlatformArea->setStyleSheet(QString::fromUtf8("background-color: rgb(97, 53, 13);"));
+        if (DEBUG_BACKGROUND)
+            PlatformArea->setStyleSheet(QString::fromUtf8("background-color: rgb(97, 53, 13);"));
 
         platform = new QPushButton(GameSpace);
         //platform->resize(256, 32);
@@ -260,7 +264,8 @@ private:
         freeArea->setSizePolicy(sizePolicy5);
         freeArea->setMinimumSize(QSize(32, 32));
         freeArea->setMaximumSize(QSize(16777215, 128));
-        freeArea->setStyleSheet(QString::fromUtf8("background-color: rgb(94, 92, 10);"));
+        if (DEBUG_BACKGROUND)
+            freeArea->setStyleSheet(QString::fromUtf8("background-color: rgb(94, 92, 10);"));
 
         ball = new Ball();
         ball->setParent(GameSpace);
@@ -434,7 +439,8 @@ public:
         this->setupUi();
 
         this->platform_y = (float)this->height() - 94.0f;
-        this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
+        if (DEBUG_BACKGROUND)
+            this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
 
         this->create_demo_blocks();
         this->wipe_targets_data();
@@ -449,8 +455,11 @@ public:
         //this->process_ball_collisions();
         //this->move_ball();
         for (Ball* _ball : this->balls){
-            _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &targets, this->GameSpace);
+            _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &targets, this->GameSpace, &this->bonuses, this->GameSpace);
             _ball->move();
+        }
+        for (Bonus* _bonus : this->bonuses){
+            _bonus->move();
         }
 
 
@@ -459,7 +468,7 @@ public:
     void rest_game(){
         this->wipe_targets_data();
         std::cout << "Level path :" << std::endl;
-        std::string file_path = "../levels/level_b01.level";
+        std::string file_path = "../levels/debug_b1.level";
         //std::cin >> file_path;
         load_level_data(file_path);
 

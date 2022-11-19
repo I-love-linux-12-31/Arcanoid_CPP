@@ -20,6 +20,7 @@ add_executable(Arcanoid_cpp
         ./GUI/GameWindow.h++
         ./GUI/UIElements.h++
         ./GUI/Ball.hpp
+        ./GUI/Bonuses.hpp
         game_consts_and_globals.hpp
         fps_control.h++
         random.h++

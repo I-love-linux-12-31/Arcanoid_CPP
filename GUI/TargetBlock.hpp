@@ -22,13 +22,16 @@ public:
     void set_bonus(bool status){
         this->bonus = status;
     }
-    void hit_block(){
+    bool hit_block(){
         this->hp -= 1;
         if (this->hp < 1){
             score += (int)this->level;
             this->kill_target();
+            this->update_color();
+            return true;
         }
         this->update_color();
+        return false;
     }
     void update_color(){
         std::string _color_a = "68, 8, 8, 175";

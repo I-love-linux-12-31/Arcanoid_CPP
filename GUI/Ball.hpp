@@ -14,6 +14,7 @@
 #include "../fps_control.h++"
 
 #include "TargetBlock.hpp"
+#include "Bonuses.hpp"
 
 
 class Ball : public QPushButton
@@ -56,7 +57,7 @@ public:
                           });
     }
 
-    void process_ball_collisions(float platform_x, float platform_y, float platform_w, float platform_h, std::vector<std::vector<TargetBlock*>>* targets, QWidget* GameSpace){
+    void process_ball_collisions(float platform_x, float platform_y, float platform_w, float platform_h, std::vector<std::vector<TargetBlock*>>* targets, QWidget* GameSpace, std::vector<Bonus*>* bonuses, QWidget* parent){
         bool next_move_required = false;
         // Walls
         if (this->ball_y > (float)GameSpace->height() - BALL_SIZE)
@@ -93,7 +94,14 @@ public:
                     if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
                         this->ball_x + BALL_SIZE / 2 > target->x()) {
                         //target->setText("X");
-                        target->hit_block();
+                        if (target->hit_block() and target->is_bonus()){
+                            bonuses->push_back(new Bonus());
+                            (*bonuses)[bonuses->size() - 1]->setParent(parent);
+                            (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
+                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png");
+
+                            std::cout << "Bonus !!!!" << std::endl;
+                        }
                         //target->kill_target();
                         //score += 1;
                         this->ball_speed_y *= -1.0f;
@@ -110,7 +118,14 @@ public:
                         //target->setText("X");
                         //target->kill_target();
                         //score += 1;
-                        target->hit_block();
+                        if (target->hit_block() and target->is_bonus()){
+                            bonuses->push_back(new Bonus());
+                            (*bonuses)[bonuses->size() - 1]->setParent(parent);
+                            (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
+                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png");
+
+                            std::cout << "Bonus !!!!" << std::endl;
+                        }
                         this->ball_speed_x *= -1.0f;
                         next_move_required = true;
                     }
