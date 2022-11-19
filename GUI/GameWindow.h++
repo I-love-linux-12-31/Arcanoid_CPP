@@ -340,8 +340,8 @@ private:
 
         for (auto block : this->targets){
             for (auto target : block) {
-                float dy = (float) (this->GameSpace->height() - 256 - 8) / (float) (12) * 1.1f;
-                float dx = (float) (this->GameSpace->width() - 8) / (float) (12) * 1.0f;
+                float dy = (float) (this->GameSpace->height() - 256 - 8) / (float) (13) * 1.1f;
+                float dx = (float) (this->GameSpace->width() - 8) / (float) (14) * 1.0f;
                 float pos_y = (float) target->get_row() * dy + 4;
                 float pos_x = (float) target->get_col() * dx + 4;
                 target->setGeometry(pos_x, pos_y, dx, dy);
@@ -350,16 +350,16 @@ private:
     }
 
     void create_demo_blocks(){
-        for (int row = 0; row < 12;row++){
+        for (int row = 0; row < 13;row++){
             std::vector<TargetBlock*> current_row;
-            for (int col = 0; col < 12;col++){
+            for (int col = 0; col < 14;col++){
                 current_row.push_back(new TargetBlock());
                 current_row[current_row.size() - 1]->set_hp(-1);
                 current_row[current_row.size() - 1]->set_row(row);
                 current_row[current_row.size() - 1]->set_col(col);
                 current_row[current_row.size() - 1]->setParent(this->GameSpace);
-                float dy = (float)(this->GameSpace->height() - 128 - 8) / (float)(12) * 1.1f;
-                float dx = (float)(this->GameSpace->width() - 8) / (float)(12) * 1.0f;
+                float dy = (float)(this->GameSpace->height() - 128 - 8) / (float)(13) * 1.1f;
+                float dx = (float)(this->GameSpace->width() - 8) / (float)(14) * 1.0f;
                 float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 4;
                 float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 4;
                 current_row[current_row.size() - 1]->setGeometry(pos_x, pos_y, dx, dy);

@@ -22,12 +22,16 @@ public:
         this->pos_y = this->y();
 
         auto* icon = new QIcon(img_path.c_str());
-        this->setIcon(*icon);
+        this->setAutoFillBackground(true);
+        //icon->pixmap(64, 64);
+        //this->setIcon(*icon);
+        this->setStyleSheet("background-image: url(../icons/Ball_triple_ico.png);border: none");
+        this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         this->show();
     }
 
     void move(){
-        std::cout << "Bonus located at " << this->x() << " " << this->y() << " Size is : " << this->size().width() << " X " << this->size().height() << std::endl;
+        //std::cout << "Bonus located at " << this->x() << " " << this->y() << " Size is : " << this->size().width() << " X " << this->size().height() << std::endl;
         if (current_fps < 1)
             current_fps = 256;
         this->pos_y += 128.0f / (float)get_main_thread_fps();
