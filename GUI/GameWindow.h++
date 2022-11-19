@@ -24,115 +24,42 @@
 #include "../fps_control.h++"
 #include "../random.h++"
 #include "../level_files_handler.h++"
+#include "../game_consts_and_globals.hpp"
+
+#include "Ball.hpp"
+#include "TargetBlock.hpp"
 
 QT_BEGIN_NAMESPACE
 
 #define Form this
 
-int score = 0;
 
 
-class TargetBlock : public QPushButton
-{
-    unsigned int level = 1;
-    unsigned int hp = 1;
-    int column = 0, row = 0;
-    bool bonus = false;
-public:
-    bool is_bonus(){
-        return this->bonus;
-    }
-    void set_bonus(bool status){
-        this->bonus = status;
-    }
-    void hit_block(){
-        this->hp -= 1;
-        if (this->hp < 1){
-            score += (int)this->level;
-            this->kill_target();
-        }
-        this->update_color();
-    }
-    void update_color(){
-        std::string _color_a = "68, 8, 8, 175";
-        std::string _color_b = "68, 8, 8, 175";
-        switch (this->hp) {
-            case 0:
-                this->hide();
-                this->setStyleSheet("");
-                return;
-            case 1:
-                if (this->is_bonus())
-                    _color_a = "255, 255, 255, 229";
-                else
-                    _color_a = "135, 184, 128, 229";
-                _color_b = _color_a;
-                break;
-            case 2:
-                if (this->is_bonus())
-                    _color_a = "0, 255, 245, 229";
-                else
-                    _color_a = "2, 65, 255, 175";
-                _color_b = _color_a;
-                break;
-            case 3:
-                _color_a = "92, 255, 2, 175";
-                _color_b = _color_a;
-                break;
-            default:
-                _color_a = "0, 0, 0, 255";
-                _color_b = _color_a;
-                break;
-
-        }
-        this->show();
-        this->setStyleSheet((" background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,     stop: 0 rgba(" + _color_a + "), stop: 1 rgba(" + _color_b + "));").c_str());
-    }
-    bool is_dead(){
-        return this->hp == 0;
-    }
-    void set_level(int &_level){
-        this->level = _level;
-    }
-    void set_hp(int _hp){
-        this->hp = _hp;
-        this->update_color();
-    }
-    int get_col(){
-        return this->column;
-    }
-    int get_row(){
-        return this->row;
-    }
-    void set_col(int col){
-        this->column = col;
-    }
-    void set_row(int _row){
-        this->row = _row;
-    }
-    void kill_target(){
-        this->hp = 0;
-        //this->setStyleSheet(" background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,     stop: 0 rgba(68, 8, 8, 175), stop: 1 rgba(68, 8, 8, 175));");
-        this->hide();
-    }
-    void create(int _col, int _row){
-        this->set_col(_col);
-        this->set_row(_row);
-    }
-};
 
 class GameWindow : public QWidget
 {
-private:
-    QVBoxLayout *verticalLayout;
-    QWidget *widget_3;
-    QHBoxLayout *horizontalLayout;
+public:
+    QWidget *GameSpace;
+    float platform_x = 0.0f;
+    float platform_y = 0.0f;
+    float platform_speed = 5000.5f;
+    float platform_speed_multiple = 1.0f;
+
+
+    int platform_weight = 256;
+    QPushButton *platform;
+
+
     QLabel *label;
     QLabel *label_2;
     QLabel *label_3;
     QLabel *label_4;
+private:
+    QVBoxLayout *verticalLayout;
+    QWidget *widget_3;
+    QHBoxLayout *horizontalLayout;
+
     QWidget *widget;
-    QWidget *GameSpace;
     QVBoxLayout *verticalLayout_2;
     QWidget *targetsArea;
     QWidget *widget_7;
@@ -140,7 +67,8 @@ private:
     QWidget *PlatformArea;
     QWidget *freeArea;
 
-    QPushButton *ball;
+    //QPushButton *ball;
+    Ball* ball;
     float ball_x = 256.0f;
     float ball_y = 512.0f;
 
@@ -153,24 +81,14 @@ private:
     int frames = 0;
     unsigned int current_fps = 256;
 
-    float platform_x = 0.0f;
-    float platform_y = 0.0f;
-    const float PLATFORM_SPEED_START = 10000.0f;
-    float platform_speed = 5000.5f;
-    float platform_speed_multiple = 1.0f;
-
-
-    int platform_weight = 256;
-
-
-
     QWidget *gameWindow;
     QMainWindow *mainMenu;
-    QPushButton *platform;
 
     QGridLayout *targetsLayout;
 
     std::vector<std::vector<TargetBlock*>> targets;
+
+    std::vector<Ball*> balls;
 
 
 
@@ -202,13 +120,13 @@ private:
         if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_A or keyEvent->key() == Qt::Key_Left) {
-                this->platform_speed = -1.0f * this->platform_speed_multiple * this->PLATFORM_SPEED_START;
+                this->platform_speed = -1.0f * this->platform_speed_multiple * PLATFORM_SPEED_START;
                 this->move_platform();
                 std::cout << "L" << std::endl;
                 return true;
             }
             if (keyEvent->key() == Qt::Key_D or keyEvent->key() == Qt::Key_Right) {
-                this->platform_speed = this->platform_speed_multiple * this->PLATFORM_SPEED_START;
+                this->platform_speed = this->platform_speed_multiple * PLATFORM_SPEED_START;
                 this->move_platform();
                 std::cout << "R" << std::endl;
                 return true;
@@ -344,16 +262,20 @@ private:
         freeArea->setMaximumSize(QSize(16777215, 128));
         freeArea->setStyleSheet(QString::fromUtf8("background-color: rgb(94, 92, 10);"));
 
-        ball = new QPushButton(GameSpace);
-        ball->setObjectName(QString::fromUtf8("ball"));
-        ball->setGeometry(QRect(256, 256, BALL_SIZE, BALL_SIZE));
-        ball->setMinimumSize(QSize(16, 16));
-        ball->setMaximumSize(QSize(BALL_SIZE, BALL_SIZE));
-        ball->setStyleSheet(QString::fromUtf8("   border-style: outset;\n"
-                                              "   border-width: 2px;\n"
-                                              "   border-radius: 8px;\n"
-                                              "   border-color: beige;\n"
-                                              "   padding: 2px;"));
+        ball = new Ball();
+        ball->setParent(GameSpace);
+        ball->init();
+//        ball = new QPushButton(GameSpace);
+//        ball->setObjectName(QString::fromUtf8("ball"));
+//        ball->setGeometry(QRect(256, 256, BALL_SIZE, BALL_SIZE));
+//        ball->setMinimumSize(QSize(16, 16));
+//        ball->setMaximumSize(QSize(BALL_SIZE, BALL_SIZE));
+//        ball->setStyleSheet(QString::fromUtf8("   border-style: outset;\n"
+//                                              "   border-width: 2px;\n"
+//                                              "   border-radius: 8px;\n"
+//                                              "   border-color: beige;\n"
+//                                              "   padding: 2px;"));
+        this->balls.push_back(ball);
 
 
 
@@ -386,7 +308,10 @@ private:
         ball->setText(QCoreApplication::translate("Form", "*", nullptr));
     } // retranslateUi
 
+    //todo delete this!
+    /*
     void move_ball(){
+
         //QPoint position = this->ball->pos();
         //position.setY(position.y() - 1);
         if (current_fps < 1)
@@ -401,8 +326,10 @@ private:
                                         this->ball->width()
         });
         //std::cout << this->ball->x() << "/" << this->ball->y() << std::endl;
-    }
 
+
+    }
+*/
     void move_platform(){
         if (current_fps < 1)
             current_fps = 256;
@@ -501,6 +428,9 @@ private:
         }
     }
 public:
+    void update_score(){
+        this->label_2->setText(std::to_string(score).c_str());
+    }
     void show(){
         if (this->mainMenu != nullptr)
             this->mainMenu->hide();
@@ -536,6 +466,7 @@ public:
         //std::cin >> file_path;
         load_level_data(file_path);
     }
+    /* todo delete this!
     void process_ball_collisions(){
         bool next_move_required = false;
         // Walls
@@ -609,11 +540,15 @@ public:
         }
 
     }
-
+    */
 
     void new_game_iteration(){
-        this->process_ball_collisions();
-        this->move_ball();
+        //this->process_ball_collisions();
+        //this->move_ball();
+        for (Ball* _ball : this->balls){
+            _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &targets, this->GameSpace);
+            _ball->move();
+        }
 
 
     }
