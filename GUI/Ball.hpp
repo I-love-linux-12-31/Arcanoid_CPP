@@ -32,6 +32,12 @@ public:
     float get_y(){
         return this->ball_y;
     }
+    void set_y(float y){
+        this->ball_y = y;
+    }
+    void set_x(float x){
+        this->ball_x = x;
+    }
     void init(int x  = 256, int y = 256){
         this->setObjectName(QString::fromUtf8("ball"));
         this->setGeometry(QRect(x, y, (int)BALL_SIZE, (int)BALL_SIZE));
@@ -98,7 +104,7 @@ public:
                             bonuses->push_back(new Bonus());
                             (*bonuses)[bonuses->size() - 1]->setParent(parent);
                             (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
-                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png");
+                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png", BONUS_TYPE_TRIPLE_BALL);
 
                             std::cout << "Bonus !!!!" << std::endl;
                         }
@@ -122,7 +128,7 @@ public:
                             bonuses->push_back(new Bonus());
                             (*bonuses)[bonuses->size() - 1]->setParent(parent);
                             (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
-                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png");
+                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png", BONUS_TYPE_TRIPLE_BALL);
 
                             std::cout << "Bonus !!!!" << std::endl;
                         }

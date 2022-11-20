@@ -462,7 +462,42 @@ public:
             _bonus->move();
         }
 
+        process_bonus_collisions();
 
+
+    }
+    bool check_bonus_collisions(Bonus* bonus){
+        if (platform_y < bonus->pos_y + bonus->height()){
+            if (platform_x > (float)bonus->get_x() and platform_x < (float)bonus->get_x() + (float)bonus->width() or
+            platform_x + (float)platform_weight < (float)bonus->get_x() + (float)bonus->width() and platform_x + (float)platform_weight > (float)bonus->get_x() or
+            (float)bonus->get_x() < platform_x + (float)platform_weight and (float)bonus->get_x() > platform_x
+            ){
+                if (bonus->isHidden())
+                    return false;
+                std::cout << "Collide !" << std::endl;
+                bonus->hide();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void process_bonus_collisions(){
+        for (auto bonus : bonuses){
+            if (check_bonus_collisions(bonus)){
+                switch (bonus->bonus_type) {
+                    case BONUS_TYPE_TRIPLE_BALL:
+                        Ball* _ball = new Ball();
+                        _ball->setParent(this->GameSpace);
+                        _ball->init();
+                        _ball->show();
+
+                        _ball->set_x(platform_x);
+                        _ball->set_y(platform_y - 128);
+                        this->balls.push_back(_ball);
+                }
+            }
+        }
     }
 
     void rest_game(){
