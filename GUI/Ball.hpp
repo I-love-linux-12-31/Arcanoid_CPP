@@ -26,6 +26,10 @@ private:
     float ball_speed_x = BALL_SPEED_START;
 
 public:
+    void multiply_ball_speed(float m){
+        this->ball_x *= m;
+        this->ball_y *= m;
+    }
     float get_x(){
         return this->ball_x;
     }
@@ -104,7 +108,7 @@ public:
                             bonuses->push_back(new Bonus());
                             (*bonuses)[bonuses->size() - 1]->setParent(parent);
                             (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
-                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png", BONUS_TYPE_TRIPLE_BALL);
+                            (*bonuses)[bonuses->size() - 1]->init();
 
                             std::cout << "Bonus !!!!" << std::endl;
                         }
@@ -128,7 +132,7 @@ public:
                             bonuses->push_back(new Bonus());
                             (*bonuses)[bonuses->size() - 1]->setParent(parent);
                             (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
-                            (*bonuses)[bonuses->size() - 1]->init("../icons/Ball_triple_ico.png", BONUS_TYPE_TRIPLE_BALL);
+                            (*bonuses)[bonuses->size() - 1]->init();
 
                             std::cout << "Bonus !!!!" << std::endl;
                         }

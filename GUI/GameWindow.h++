@@ -410,6 +410,19 @@ private:
             }
         }
     }
+
+    void apply_bonus_triple_ball(bool _recursion = false){
+        Ball* _ball = new Ball();
+        _ball->setParent(this->GameSpace);
+        _ball->init();
+        _ball->show();
+
+        _ball->set_x(platform_x);
+        _ball->set_y(platform_y - 128);
+        this->balls.push_back(_ball);
+        if (!_recursion)
+            this->apply_bonus_triple_ball(true);
+    }
 public:
     void update_score(){
         this->label_2->setText(std::to_string(score).c_str());
@@ -491,14 +504,11 @@ public:
             if (check_bonus_collisions(bonus)){
                 switch (bonus->bonus_type) {
                     case BONUS_TYPE_TRIPLE_BALL:
-                        Ball* _ball = new Ball();
-                        _ball->setParent(this->GameSpace);
-                        _ball->init();
-                        _ball->show();
-
-                        _ball->set_x(platform_x);
-                        _ball->set_y(platform_y - 128);
-                        this->balls.push_back(_ball);
+                        this->apply_bonus_triple_ball();
+                        break;
+                    case BONUS_TYPE_TRIPLE_SPEED_UP2:
+                        this->balls[randint(0, (int)this->balls.size())]->multiply_ball_speed(1.5f);
+                        break;
                 }
             }
         }

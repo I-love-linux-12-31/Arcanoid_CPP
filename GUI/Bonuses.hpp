@@ -12,11 +12,39 @@
 #include <string>
 
 #include "../fps_control.h++"
+const unsigned int BONUS_TYPE_RANDOM = 0;
 const unsigned int BONUS_TYPE_TRIPLE_BALL = 1;
 const unsigned int BONUS_TYPE_TRIPLE_SPEED_UP2 = 2;
 
 class Bonus: public QPushButton
 {
+private:
+    void set_random_type(){
+        switch (randint(0, 2)) {
+            case 0:
+                this->bonus_type = BONUS_TYPE_TRIPLE_BALL;
+                break;
+            case 1:
+                this->bonus_type = BONUS_TYPE_TRIPLE_SPEED_UP2;
+                break;
+            default:
+                std::cout << "Random bonus type set error : unknown randint ! Setting default" << std::endl;
+                this->bonus_type = BONUS_TYPE_TRIPLE_SPEED_UP2;
+                break;
+
+        }
+
+    }
+    void update_image(){
+        switch (this->bonus_type) {
+            case BONUS_TYPE_TRIPLE_BALL:
+                this->setStyleSheet("background-image: url(../icons/Ball_triple_ico.png);border: none");
+                break;
+            case BONUS_TYPE_TRIPLE_SPEED_UP2:
+                    this->setStyleSheet("background-image: url(../icons/Ball_speed_up_ico.png);border: none");
+                    break;
+        }
+    }
 public:
     bool to_delete = false;
     float pos_y;
@@ -24,15 +52,16 @@ public:
     int get_x(){
         return this->x();
     }
-    void init(std::string img_path, unsigned int _type){
-        this->bonus_type = _type;
+    void init(unsigned int _type = BONUS_TYPE_RANDOM){
+        if (_type == BONUS_TYPE_RANDOM)
+            this->set_random_type();
+        else
+            this->bonus_type = _type;
+        this->update_image();
+
         this->pos_y = (float)this->y();
 
-        //auto* icon = new QIcon(img_path.c_str());
         this->setAutoFillBackground(true);
-        //icon->pixmap(64, 64);
-        //this->setIcon(*icon);
-        this->setStyleSheet("background-image: url(../icons/Ball_triple_ico.png);border: none");
         this->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         this->show();
     }
@@ -49,7 +78,8 @@ public:
                                   this->width()
                           });
     }
-
 };
+
+
 
 #endif //ARCANOID_CPP_BONUSES_HPP
