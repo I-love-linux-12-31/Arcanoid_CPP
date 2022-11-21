@@ -25,6 +25,7 @@ add_executable(Arcanoid_cpp
         fps_control.h++
         random.h++
         level_files_handler.h++
+        physics.hpp
         )
 target_link_libraries(Arcanoid_cpp
         Qt::Core

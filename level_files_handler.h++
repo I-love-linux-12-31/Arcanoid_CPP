@@ -71,4 +71,14 @@ std::vector<std::vector<int>> get_map(std::string &file_path){
 }
 
 
+std::string get_level_path_by_id(int id, bool bonus = false){
+    std::string level_str = std::to_string(id);
+    if (id < 10)
+        level_str = "0" + level_str;
+    if (bonus)
+        return "../levels/level_b" + level_str + ".level";
+    return "../levels/level_" + level_str + ".level";
+}
+
+
 #endif //ARCANOID_CPP_LEVEL_FILES_HANDLER_HPP

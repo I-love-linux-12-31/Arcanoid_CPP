@@ -29,6 +29,7 @@
 #include "Ball.hpp"
 #include "TargetBlock.hpp"
 #include "Bonuses.hpp"
+#include "../physics.hpp"
 
 QT_BEGIN_NAMESPACE
 
@@ -412,16 +413,45 @@ private:
     }
 
     void apply_bonus_triple_ball(bool _recursion = false){
+        float k = 1.5f;
+        int iteration = 0;
         Ball* _ball = new Ball();
+        _ball->set_id(this->balls.size());
         _ball->setParent(this->GameSpace);
-        _ball->init();
+        std::cout << "Creating fucking ball :" <<
+        this->balls[this->balls.size() - 1]->x() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion() <<
+        " $$$ " <<
+        this->balls[this->balls.size() - 1]->y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion()<< std::endl;
+        _ball->init(
+                this->balls[this->balls.size() - 1]->get_x() + (float)(randint((int)BALL_SIZE,(int)(BALL_SIZE * 1.5f))) * get_random_inversion(),
+                this->balls[this->balls.size() - 1]->get_y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion());
+        bool good_spawn = false;
+        while(!good_spawn){
+            iteration++;
+            good_spawn = true;
+            for (Ball* other_ball : this->balls){
+                if (is_collide(other_ball, _ball)){
+                    std::cout << "Spawn collide with ball №" << other_ball->get_id() << std::endl;
+                    good_spawn = false;
+                }
+            }
+            if (!good_spawn){
+                std::cout << "Failed to plant new ball at :" << _ball->get_x() << ", " << _ball->get_y() << std::endl;
+                if (iteration > 16 and k < 50.0f){
+                    iteration = 0;
+                    k += 0.2f;
+                }
+                _ball->set_y(this->balls[this->balls.size() - 1]->y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * k))) * get_random_inversion());
+                _ball->set_x(this->balls[this->balls.size() - 1]->x() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * k))) * get_random_inversion());
+            }
+        }
         _ball->show();
 
-        _ball->set_x(platform_x);
-        _ball->set_y(platform_y - 128);
-        this->balls.push_back(_ball);
+        //_ball->set_x((float)this->balls[0]->x());
+        //_ball->set_y((float)this->balls[0]->y());
         if (!_recursion)
             this->apply_bonus_triple_ball(true);
+        this->balls.push_back(_ball);
     }
 public:
     void update_score(){
@@ -469,7 +499,9 @@ public:
         //this->move_ball();
         for (Ball* _ball : this->balls){
             _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &targets, this->GameSpace, &this->bonuses, this->GameSpace);
+            _ball->process_ball_collisions_with_other_balls(&this->balls);
             _ball->move();
+            std::cout << "";
         }
         for (Bonus* _bonus : this->bonuses){
             _bonus->move();
@@ -481,20 +513,13 @@ public:
 
     }
     bool check_bonus_collisions(Bonus* bonus){
-        if (platform_y + (float)platform->height() < bonus->pos_y + (float)bonus->height())
+        if (bonus->isHidden() or bonus->to_delete)
+            return false;
+        if (is_collide(bonus, this->platform)){
+            std::cout << "Bonus collide !" << std::endl;
+            bonus->hide();
             bonus->to_delete = true;
-        if (platform_y < bonus->pos_y + (float)bonus->height()){
-            if (platform_x > (float)bonus->get_x() and platform_x < (float)bonus->get_x() + (float)bonus->width() or
-            platform_x + (float)platform_weight < (float)bonus->get_x() + (float)bonus->width() and platform_x + (float)platform_weight > (float)bonus->get_x() or
-            (float)bonus->get_x() < platform_x + (float)platform_weight and (float)bonus->get_x() > platform_x
-            ){
-                if (bonus->isHidden() or bonus->to_delete)
-                    return false;
-                std::cout << "Collide !" << std::endl;
-                bonus->hide();
-                bonus->to_delete = true;
-                return true;
-            }
+            return true;
         }
         return false;
     }
@@ -507,7 +532,9 @@ public:
                         this->apply_bonus_triple_ball();
                         break;
                     case BONUS_TYPE_TRIPLE_SPEED_UP2:
-                        this->balls[randint(0, (int)this->balls.size())]->multiply_ball_speed(1.5f);
+                        //this->balls[randint(0, (int)this->balls.size())]->multiply_ball_speed(1.2f);
+                        //todo bug: ball teleportation!
+                        // This bonus onus blocked
                         break;
                 }
             }
@@ -516,9 +543,13 @@ public:
 
     void rest_game(){
         this->wipe_targets_data();
-        std::cout << "Level path :" << std::endl;
+        std::cout << "Level id :" << std::endl;
         std::string file_path = "../levels/debug_b1.level";
         //std::cin >> file_path;
+        int int_buff;
+        std::cout << "Level id:";
+        std::cin >> int_buff;
+        file_path = get_level_path_by_id(int_buff, false);
         load_level_data(file_path);
 
 
