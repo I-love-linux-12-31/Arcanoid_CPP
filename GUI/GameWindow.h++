@@ -462,20 +462,24 @@ public:
             _bonus->move();
         }
 
+        update_score();
         process_bonus_collisions();
 
 
     }
     bool check_bonus_collisions(Bonus* bonus){
-        if (platform_y < bonus->pos_y + bonus->height()){
+        if (platform_y + (float)platform->height() < bonus->pos_y + (float)bonus->height())
+            bonus->to_delete = true;
+        if (platform_y < bonus->pos_y + (float)bonus->height()){
             if (platform_x > (float)bonus->get_x() and platform_x < (float)bonus->get_x() + (float)bonus->width() or
             platform_x + (float)platform_weight < (float)bonus->get_x() + (float)bonus->width() and platform_x + (float)platform_weight > (float)bonus->get_x() or
             (float)bonus->get_x() < platform_x + (float)platform_weight and (float)bonus->get_x() > platform_x
             ){
-                if (bonus->isHidden())
+                if (bonus->isHidden() or bonus->to_delete)
                     return false;
                 std::cout << "Collide !" << std::endl;
                 bonus->hide();
+                bonus->to_delete = true;
                 return true;
             }
         }
@@ -510,6 +514,15 @@ public:
 
         this->ball_x = 256.0f;
         this->ball_y = 512.0f;
+
+        for (auto* _ball : this->balls){
+            if (_ball != this->ball)
+                delete _ball;
+        }
+        this->balls.clear();
+        this->balls.push_back(this->ball);
+        this->ball_y = platform_y + 128;
+        this->ball_x = platform_x;
 
         // create_demo_blocks();
         // delete &this->targets;
