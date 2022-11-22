@@ -81,4 +81,12 @@ std::string get_level_path_by_id(int id, bool bonus = false){
 }
 
 
+unsigned int get_main_levels_count(){
+    return 32;
+}
+unsigned int get_bonus_levels_count(){
+    return 8;
+}
+
+
 #endif //ARCANOID_CPP_LEVEL_FILES_HANDLER_HPP

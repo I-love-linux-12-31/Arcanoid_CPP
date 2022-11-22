@@ -20,6 +20,8 @@
 #include <QMainWindow>
 
 #include "GameWindow.h++"
+#include "TargetBlock.hpp"
+#include "LevelSelectMenu.hpp"
 
 QT_BEGIN_NAMESPACE
 
@@ -30,6 +32,7 @@ public:
     GameWindow *g_window;
 
 private:
+    LevelSelectMenu* levelSelectMenu;
     QWidget *centralwidget;
     QGridLayout *gridLayout;
     QWidget *widget_2;
@@ -62,6 +65,14 @@ private:
 //    }
 
 public:
+    const void onLevelSelectButtonPushed(){
+        this->levelSelectMenu->show();
+    }
+    void init(){
+        this->setupUi();
+        this->levelSelectMenu = new LevelSelectMenu();
+        this->levelSelectMenu->init(this->g_window, this);
+    }
     void setupUi()
     {
         auto MainWindow = this;
@@ -106,6 +117,8 @@ public:
         pushButton_2->setObjectName(QString::fromUtf8("pushButton_2"));
         pushButton_2->setMaximumSize(QSize(256, 16777215));
         pushButton_2->setFont(font);
+
+        QObject::connect(pushButton_2, &QPushButton::clicked, this, &Ui_MainWindow::onLevelSelectButtonPushed);
 
         verticalLayout->addWidget(pushButton_2);
 
@@ -154,6 +167,7 @@ public:
 
     } // setupUi
 
+private:
 
     void retranslateUi(Ui_MainWindow *MainWindow)
     {
@@ -164,7 +178,7 @@ public:
         pushButton_4->setText(QCoreApplication::translate("MainWindow", "About", nullptr));
         pushButton_3->setText(QCoreApplication::translate("MainWindow", "Exit", nullptr));
     } // retranslateUi
-private:
+
     bool eventFilter(QObject *object, QEvent *event)
     {
         if (event->type() == QEvent::KeyPress) {

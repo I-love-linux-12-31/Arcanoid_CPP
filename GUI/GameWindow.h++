@@ -20,7 +20,10 @@
 #include<vector>
 #include<string>
 
+#ifndef MAINNDWLFU_H
 #include "MainMenu.hpp"
+#endif
+
 #include "../fps_control.h++"
 #include "../random.h++"
 #include "../level_files_handler.h++"
@@ -393,6 +396,7 @@ private:
     }
     void load_level_data(std::string &file_path)
     {
+        this->rest_game();
         std::vector<std::vector<int>> data = get_map(file_path);
         for (int i = 0 ; i < this->targets.size(); i++){
             if (i >= data.size())
@@ -454,6 +458,13 @@ private:
         this->balls.push_back(_ball);
     }
 public:
+    void play_level(unsigned int level_id, bool bonus = false){
+        std::cout << "Loading level by plat button..." << std::endl;
+        std::string level_path = get_level_path_by_id((int)level_id, bonus);
+        this->load_level_data(level_path);
+        this->show();
+
+    }
     void update_score(){
         this->label_2->setText(std::to_string(score).c_str());
     }
@@ -543,14 +554,7 @@ public:
 
     void rest_game(){
         this->wipe_targets_data();
-        std::cout << "Level id :" << std::endl;
-        std::string file_path = "../levels/debug_b1.level";
-        //std::cin >> file_path;
-        int int_buff;
-        std::cout << "Level id:";
-        std::cin >> int_buff;
-        file_path = get_level_path_by_id(int_buff, false);
-        load_level_data(file_path);
+        //load_level_data(file_path);
 
 
         this->ball_x = 256.0f;
@@ -559,11 +563,13 @@ public:
         for (auto* _ball : this->balls){
             if (_ball != this->ball)
                 delete _ball;
+            else{
+                _ball->set_x(platform_x);
+                _ball->set_y(platform_y - 128);
+            }
         }
         this->balls.clear();
         this->balls.push_back(this->ball);
-        this->ball_y = platform_y + 128;
-        this->ball_x = platform_x;
 
         // create_demo_blocks();
         // delete &this->targets;

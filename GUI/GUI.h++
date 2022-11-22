@@ -7,4 +7,5 @@
 
 #include "MainMenu.hpp"
 #include "GameWindow.h++"
+#include "LevelSelectMenu.hpp"
 #endif //ARCANOID_CPP_GUI_HPP

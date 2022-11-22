@@ -27,10 +27,11 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
     window = new Ui_MainWindow();
     std::cout << "INIT" << std::endl;
-    window->setupUi();
-    std::cout << "INIT DONE" << std::endl;
     window->g_window = new GameWindow();
+    window->init();
     window->g_window->init(window);
+    std::cout << "INIT DONE" << std::endl;
+
 
     window->show();
 

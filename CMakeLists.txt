@@ -21,6 +21,7 @@ add_executable(Arcanoid_cpp
         ./GUI/UIElements.h++
         ./GUI/Ball.hpp
         ./GUI/Bonuses.hpp
+        GUI/LevelSelectMenu.hpp
         game_consts_and_globals.hpp
         fps_control.h++
         random.h++

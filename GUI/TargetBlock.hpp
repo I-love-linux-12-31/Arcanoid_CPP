@@ -34,8 +34,9 @@ public:
         return false;
     }
     void update_color(){
-        std::string _color_a = "68, 8, 8, 175";
-        std::string _color_b = "68, 8, 8, 175";
+        std::string _color_a;
+        std::string _color_b;
+        this->setText("");
         switch (this->hp) {
             case 0:
                 this->hide();
@@ -43,24 +44,45 @@ public:
                 return;
             case 1:
                 if (this->is_bonus())
-                    _color_a = "255, 255, 255, 229";
+                    _color_a = "255, 255, 255, 255";
                 else
-                    _color_a = "135, 184, 128, 229";
+                    _color_a = "135, 184, 128, 255";
                 _color_b = _color_a;
                 break;
             case 2:
                 if (this->is_bonus())
-                    _color_a = "0, 255, 245, 229";
+                    _color_a = "0, 255, 245, 255";
                 else
-                    _color_a = "2, 65, 255, 175";
+                    _color_a = "2, 65, 255, 255";
                 _color_b = _color_a;
                 break;
             case 3:
-                _color_a = "92, 255, 2, 175";
+                _color_a = "92, 255, 2, 255";
+                _color_b = _color_a;
+                break;
+            case 4:
+                _color_a = "139, 166, 15, 255";
+                _color_b = _color_a;
+                break;
+            case 5:
+                _color_a = "255, 191, 0, 255";
+                _color_b = _color_a;
+                break;
+            case 6:
+                _color_a = "255, 98, 0, 255";
+                _color_b = _color_a;
+                break;
+            case 7:
+                _color_a = "225, 19, 19, 255";
+                _color_b = _color_a;
+                break;
+            case 8:
+                _color_a = "109, 17, 17, 255";
                 _color_b = _color_a;
                 break;
             default:
                 _color_a = "0, 0, 0, 255";
+                this->setText((std::to_string(this->hp)).c_str());
                 _color_b = _color_a;
                 break;
 
