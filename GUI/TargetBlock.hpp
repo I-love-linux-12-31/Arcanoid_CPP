@@ -23,6 +23,10 @@ public:
         this->bonus = status;
     }
     bool hit_block(){
+        if (this->hp > 1024){
+            std::cout << "\033[31m[Error]\033[0m Bad hp value !" << std::endl;
+            this->hp = 1;
+        }
         this->hp -= 1;
         if (this->hp < 1){
             score += (int)this->level;

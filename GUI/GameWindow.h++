@@ -19,6 +19,7 @@
 
 #include<vector>
 #include<string>
+#include <QMessageBox>
 
 #ifndef MAINNDWLFU_H
 #include "MainMenu.hpp"
@@ -61,6 +62,9 @@ public:
     QLabel *label_3;
     QLabel *label_4;
 private:
+    int level_number = 0;
+    bool level_bonus = false;
+
     QVBoxLayout *verticalLayout;
     QWidget *widget_3;
     QHBoxLayout *horizontalLayout;
@@ -394,7 +398,55 @@ private:
 
 
     }
-    void load_level_data(std::string &file_path)
+    bool is_win(){
+        if (
+                std::all_of(
+                        this->targets.begin(),
+                        this->targets.end(),
+                        [](std::vector<TargetBlock *> line)
+                        {
+                            return std::all_of(line.begin(), line.end(),
+                                               [](TargetBlock* i)
+                                               {
+                                                   return i->is_dead();
+                                               }
+                                               );
+                        }))
+        {
+            return true;
+        }
+        return false;
+    }
+
+
+    void check_win_or_lose(){
+        if (this->is_win()){
+            std::cout << "You win !!!" << std::endl;
+            int return_code = QMessageBox::information(nullptr, "Win", "Level completed !", QMessageBox::Ok | QMessageBox::Close);
+
+            if (return_code == QMessageBox::Ok){
+                if (this->level_number < get_main_levels_count() and !this->level_bonus or
+                this->level_number < get_bonus_levels_count() and this->level_bonus) {
+                    std::cout << "Next level!" << std::endl;
+                    this->play_level(this->level_number + 1, this->level_bonus);
+                }
+                else{
+                    std::cout << "Last level completed !!!" << std::endl;
+                    return_code = QMessageBox::warning(this, "THE END!", "You win! It was last level.", QMessageBox::Escape);
+                    this->hide();
+                    this->mainMenu->show();
+                }
+            }
+            else { // return_code == QMessageBox::Escape
+                std::cout << "Escape to main menu!" << std::endl;
+                this->hide();
+                this->mainMenu->show();
+            }
+        }
+
+
+    }
+    void load_level_data(std::string &file_path, int _level_number = 0, bool _is_bonus_level = false)
     {
         this->rest_game();
         std::vector<std::vector<int>> data = get_map(file_path);
@@ -405,8 +457,10 @@ private:
             for (int j = 0 ; j < this->targets[i].size(); j++){
                 if (j >= data[i].size())
                     continue;
-                if (data[i][j] >= 0)
+                if (data[i][j] >= 0) {
+                    this->targets[i][j]->set_bonus(false);
                     this->targets[i][j]->set_hp(data[i][j]);
+                }
                 else {
                     this->targets[i][j]->set_bonus(true);
                     this->targets[i][j]->set_hp(data[i][j] * -1);
@@ -414,6 +468,9 @@ private:
 
             }
         }
+
+        this->level_bonus = _is_bonus_level;
+        this->level_number = _level_number;
     }
 
     void apply_bonus_triple_ball(bool _recursion = false){
@@ -461,7 +518,7 @@ public:
     void play_level(unsigned int level_id, bool bonus = false){
         std::cout << "Loading level by plat button..." << std::endl;
         std::string level_path = get_level_path_by_id((int)level_id, bonus);
-        this->load_level_data(level_path);
+        this->load_level_data(level_path, (int)level_id, bonus);
         this->show();
 
     }
@@ -520,7 +577,7 @@ public:
 
         update_score();
         process_bonus_collisions();
-
+        check_win_or_lose();
 
     }
     bool check_bonus_collisions(Bonus* bonus){
