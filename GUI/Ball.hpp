@@ -149,6 +149,9 @@ public:
                         //score += 1;
                         this->ball_speed_y *= -1.0f;
                         next_move_required = true;
+                        while (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
+                               this->ball_x + BALL_SIZE / 2 > target->x())
+                            this->move();
                     }
                     // Horizont
                     if (
@@ -171,6 +174,14 @@ public:
                         }
                         this->ball_speed_x *= -1.0f;
                         next_move_required = true;
+                        while  (
+                                (this->ball_y + BALL_SIZE / 2 > (float)target->y() and this->ball_y + BALL_SIZE / 2 < (float)target->y() + (float)target->height()
+                                 and this->ball_x + BALL_SIZE > (float)target->x() and this->ball_x < (float)target->x())
+                                or
+                                (this->ball_y + BALL_SIZE / 2 > (float)target->y() and this->ball_y + BALL_SIZE / 2 < (float)target->y() + (float)target->height()
+                                 and this->ball_x + BALL_SIZE > (float)target->x() + (float)target->width() and this->ball_x < (float)target->x() + (float)target->width())
+                                )
+                            this->move();
                     }
                 }
             }
