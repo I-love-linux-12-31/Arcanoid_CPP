@@ -6,6 +6,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+add_compile_options(-O3)
+add_compile_options(-mcx16 -msse  -msse2 -msse3) # need CPU instructions support !!!
 
 find_package(Qt6 COMPONENTS
         Core
