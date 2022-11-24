@@ -479,7 +479,6 @@ private:
         Ball* _ball = new Ball();
         _ball->set_id(this->balls.size());
         _ball->setParent(this->GameSpace);
-        std::cout << "Creating fucking ball :" <<
         this->balls[this->balls.size() - 1]->x() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion() <<
         " $$$ " <<
         this->balls[this->balls.size() - 1]->y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion()<< std::endl;
