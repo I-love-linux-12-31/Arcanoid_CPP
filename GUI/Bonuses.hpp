@@ -15,21 +15,29 @@
 const unsigned int BONUS_TYPE_RANDOM = 0;
 const unsigned int BONUS_TYPE_TRIPLE_BALL = 1;
 const unsigned int BONUS_TYPE_TRIPLE_SPEED_UP2 = 2;
+const unsigned int BONUS_TYPE_SCORE = 3;
+const unsigned int BONUS_TYPE_PLATFORM_SIZE_UP = 4;
 
 class Bonus: public QPushButton
 {
 private:
     void set_random_type(){
-        switch (randint(0, 2)) {
-            case 0:
+        switch (randint(1, 5)) {
+            case 1:
                 this->bonus_type = BONUS_TYPE_TRIPLE_BALL;
                 break;
-            case 1:
+            case 2:
                 this->bonus_type = BONUS_TYPE_TRIPLE_SPEED_UP2;
+                break;
+            case 3:
+                this->bonus_type = BONUS_TYPE_SCORE;
+                break;
+            case 4:
+                this->bonus_type = BONUS_TYPE_PLATFORM_SIZE_UP;
                 break;
             default:
                 std::cout << "Random bonus type set error : unknown randint ! Setting default" << std::endl;
-                this->bonus_type = BONUS_TYPE_TRIPLE_SPEED_UP2;
+                this->bonus_type = BONUS_TYPE_SCORE;
                 break;
 
         }
@@ -43,6 +51,12 @@ private:
             case BONUS_TYPE_TRIPLE_SPEED_UP2:
                     this->setStyleSheet("background-image: url(../icons/Ball_speed_up_ico.png);border: none");
                     break;
+            case BONUS_TYPE_SCORE:
+                this->setStyleSheet("background-image: url(../icons/bonus_score_ico.png);border: none");
+                break;
+            case BONUS_TYPE_PLATFORM_SIZE_UP:
+                this->setStyleSheet("background-image: url(../icons/Platform_size_up_ico.png);border: none");
+                break;
         }
     }
 public:

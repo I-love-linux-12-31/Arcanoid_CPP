@@ -55,6 +55,8 @@ int main(int argc, char *argv[]) {
     window->g_window->show();
     QApplication::quitOnLastWindowClosed();
 
+    auto* icon = new QIcon("../icons/Ball_triple_ico.png");
+    QApplication::setWindowIcon(*icon);
     enter_main_loop();
     return 0;
     //return QApplication::exec();

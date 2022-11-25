@@ -356,6 +356,7 @@ private:
     }
 
     void wipe_targets_data(){
+        this->platform_weight = 256;
         score = 0;
         // todo : Lock main game thread ?!!!
        // int new_hp = randint(1, 4);
@@ -579,6 +580,13 @@ public:
                         this->balls[randint(0, (int)this->balls.size())]->multiply_ball_speed(1.5f);
                         //std::cout << "Speedbust\n";
                         score += 10;
+                        break;
+                    case BONUS_TYPE_SCORE:
+                        score += 45;
+                        break;
+                    case BONUS_TYPE_PLATFORM_SIZE_UP:
+                        this->platform_weight += 64;
+                        this->move_platform();
                         break;
                 }
             }
