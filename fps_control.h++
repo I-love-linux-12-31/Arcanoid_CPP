@@ -2,8 +2,10 @@
 // Created by yaroslav_admin on 31.10.22.
 //
 
+
 #ifndef ARCANOID_CPP_FPS_CONTROL_HPP
 #define ARCANOID_CPP_FPS_CONTROL_HPP
+#include <GLFW/glfw3.h>
 #include <QtCore/QEvent>
 #include <QKeyEvent>
 #include <QTime>
@@ -14,38 +16,33 @@
 
 time_t current_time;
 int frames = 0;
-unsigned int current_fps = 512;
+unsigned int current_fps = 1024;
 
 unsigned int target_fps = 60;
 
-void next_frame(){
-    if (std::time(0) != current_time){
-        current_time = std::time(0);
-        current_fps =frames;
-        frames = 0;
-    }
-    else {
-        frames++;
-    }
-}
+double lastTime = 0.0;
 
-bool next_frame_more_target(){
-    next_frame();
-    if (frames > target_fps){
-        //std::cout << "FPS (Main thread) = " << frames << std::endl;
-        return true;
+void next_frame(){
+    double currentTime = glfwGetTime();
+    double delta = currentTime - lastTime;
+    frames++;
+
+    if ( delta >= 1.0 ){ // If last cout was more than 1 sec ago
+        // std::cout << "FPS :" << 1000.0/ (double)frames << std::endl;
+        std::cout << "FPS alt :" << current_fps << std::endl;
+
+        current_fps = (int)(frames / delta);
+        frames = 0;
+        lastTime = currentTime;
     }
-    return false;
-}
+    }
 
 unsigned int get_main_thread_fps(){
-    if (current_fps < 32){
-        return 32;
+    if (current_fps < 16){
+        return 16;
     }
     return current_fps;
 }
-
-
 
 
 #endif //ARCANOID_CPP_FPS_CONTROL_HPP

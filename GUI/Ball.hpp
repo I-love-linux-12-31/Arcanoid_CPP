@@ -63,10 +63,10 @@ public:
         this->setMinimumSize(QSize(16, 16));
         this->setMaximumSize(QSize((int)BALL_SIZE, (int)BALL_SIZE));
         this->setStyleSheet(QString::fromUtf8("   border-style: outset;\n"
-                                              "   border-width: 2px;\n"
+                                              "   border-width: 4px;\n"
                                               "   border-radius: 8px;\n"
-                                              "   border-color: beige;\n"
-                                              "   padding: 2px;\n"
+                                              "   border-color: #888899;\n"
+                                              "   padding: 6px;\n"
                                               "   color: #FF8888;\n"));
         this->ball_x = (float)x;
         this->ball_y = (float)y;
