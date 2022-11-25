@@ -34,5 +34,6 @@ target_link_libraries(Arcanoid_cpp
         Qt::Core
         Qt::Gui
         Qt::Widgets
+        glfw
         )
 
