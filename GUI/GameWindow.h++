@@ -109,16 +109,6 @@ private:
             frames++;
         }
 
-//        if (m_frameCount == 0) {
-//            m_time.start();
-//        } else {
-//            printf("FPS is %f ms\n", (float)m_time. / float(m_frameCount));
-//        }
-//        m_frameCount++;
-//        if (event->type() == QEvent::Resize){
-//            std::cout << "resizeEvent !2\n";
-//            this->onResize();
-//        }
         if (event->type() == QEvent::KeyPress) {
             auto* keyEvent = dynamic_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_A or keyEvent->key() == Qt::Key_Left) {
@@ -248,8 +238,15 @@ private:
             PlatformArea->setStyleSheet(QString::fromUtf8("background-color: rgb(97, 53, 13);"));
 
         platform = new QPushButton(GameSpace);
+        platform->setEnabled(false);
         //platform->resize(256, 32);
         platform->setGeometry(PlatformArea->x(), PlatformArea->y(), 256, 32);
+        platform->setStyleSheet(QString::fromUtf8("border-style: outset;\n"
+                                                  "border-width: 4px;\n"
+                                                  "border-radius: 8px;\n"
+                                                  "border-color: #888899;\n"
+                                                  "padding: 6px;\n"
+                                                  "background-color: rgb(153, 193, 241);"));
 
 
         freeArea = new QWidget(widget_7);
@@ -304,12 +301,9 @@ private:
     } // retranslateUi
 
     void move_platform(){
-        if (current_fps < 1)
-            current_fps = 256;
-        //this->platform_y += this->platform_speed / (float)this->current_fps;
 
-        if (this->platform_speed / (float) this->current_fps < 128.0f)
-            this->platform_x += this->platform_speed / (float) this->current_fps;
+        if (abs(this->platform_speed) / (float) get_main_thread_fps() < 128.0f)
+            this->platform_x += this->platform_speed / (float) get_main_thread_fps();
         else
             this->platform_x += 128.0f;
 
@@ -579,11 +573,12 @@ public:
                 switch (bonus->bonus_type) {
                     case BONUS_TYPE_TRIPLE_BALL:
                         this->apply_bonus_triple_ball();
+                        score += 5;
                         break;
                     case BONUS_TYPE_TRIPLE_SPEED_UP2:
-                        //this->balls[randint(0, (int)this->balls.size())]->multiply_ball_speed(1.2f);
-                        //todo bug: ball teleportation!
-                        // This bonus onus blocked
+                        this->balls[randint(0, (int)this->balls.size())]->multiply_ball_speed(1.5f);
+                        //std::cout << "Speedbust\n";
+                        score += 10;
                         break;
                 }
             }
