@@ -138,31 +138,28 @@ public:
         this->mainWindow = main_window;
         this->setupUi(this);
 
-        int w, h;
+        int w;
         w = this->width();
-        h = this->height();
-
-        //int h1 = (h - 64) / 64; // first 64 - bottom buttons bar
-        //int w1 = (w - 16) / 64; // first 16 - left border, (48 - button + 16 - free space on right!) = 64
+        //h = this->height();
 
         unsigned int buttons_required = get_main_levels_count() + get_bonus_levels_count();
 
         unsigned int max_buttons_on_line = (w - 16) / 64;
 
-        unsigned int lines_count = buttons_required / max_buttons_on_line;
-        if (buttons_required % max_buttons_on_line > 0)
-            lines_count += 1;
+//        unsigned int lines_count = buttons_required / max_buttons_on_line;
+//        if (buttons_required % max_buttons_on_line > 0)
+//            lines_count += 1;
 
         unsigned int count = 1;
         for (int row_id = 0; count <= buttons_required; row_id++){
             for (int i = 0; i < max_buttons_on_line; i++){
                 if (count > buttons_required)
                     continue;
-                QPushButton* level_btn = new QPushButton(this->Levels);
+                auto* level_btn = new QPushButton(this->Levels);
                 level_btn->setGeometry(8 + i * 64, 8 + row_id * 64 , 48, 48);
 
                 auto callback = [this, count]() {
-                    onLevelButtonClicked(count);
+                    onLevelButtonClicked((int)count);
                     return;
                 };
 

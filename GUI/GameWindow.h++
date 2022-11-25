@@ -79,22 +79,14 @@ private:
 
     //QPushButton *ball;
     Ball* ball;
-    float ball_x = 256.0f;
-    float ball_y = 512.0f;
 
-    const float BALL_SPEED_START = 128.0f;
-    float ball_speed_y = BALL_SPEED_START;
-    float ball_speed_x = BALL_SPEED_START;
     const float BALL_SIZE = 16.0f;
 
     time_t time;
     int frames = 0;
     unsigned int current_fps = 256;
 
-    QWidget *gameWindow;
     QMainWindow *mainMenu;
-
-    QGridLayout *targetsLayout;
 
     std::vector<std::vector<TargetBlock*>> targets;
 
@@ -107,8 +99,8 @@ private:
     bool eventFilter(QObject *object, QEvent *event)
     {
         //std::cout << std::time(0) << std::endl;
-        if (std::time(0) != this->time){
-            this->time = std::time(0);
+        if (std::time(nullptr) != this->time){
+            this->time = std::time(nullptr);
             std::cout << "FPS = " << this->frames << std::endl;
             this->current_fps = this->frames;
             this->frames = 0;
@@ -128,16 +120,14 @@ private:
 //            this->onResize();
 //        }
         if (event->type() == QEvent::KeyPress) {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+            auto* keyEvent = dynamic_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_A or keyEvent->key() == Qt::Key_Left) {
                 this->platform_speed = -1.0f * this->platform_speed_multiple * PLATFORM_SPEED_START;
                 this->move_platform();
-                return true;
             }
             if (keyEvent->key() == Qt::Key_D or keyEvent->key() == Qt::Key_Right) {
                 this->platform_speed = this->platform_speed_multiple * PLATFORM_SPEED_START;
                 this->move_platform();
-                return true;
             }
             if (keyEvent->key() == Qt::Key_Escape) {
                 std::cout << "ESC" << std::endl;
@@ -297,14 +287,6 @@ private:
 
         verticalLayout->addWidget(GameSpace);
 
-        targetsLayout = new QGridLayout(targetsArea);
-//        for (auto _row: this->targets){
-//            for (auto target: _row) {
-//                targetsLayout->addWidget(target, target->get_row(), target->get_col());
-//            }
-//        }
-
-
         retranslateUi();
 
         QMetaObject::connectSlotsByName(Form);
@@ -333,7 +315,7 @@ private:
 
         if (this->platform_x <= 0.0f)
             this->platform_x = 0.0f;
-        if (platform_x + (float)this->platform->width() > this->width() - 24.0f)
+        if (platform_x + (float)this->platform->width() > (float)this->width() - 24.0f)
             this->platform_x = (float)this->width() - 24.0f - (float)this->platform->width();
         this->platform->setGeometry((int)platform_x, (int)platform_y, platform_weight, 32);
 
@@ -352,7 +334,7 @@ private:
                 float dx = (float) (this->GameSpace->width() - 8) / (float) (14) * 1.0f;
                 float pos_y = (float) target->get_row() * dy + 4;
                 float pos_x = (float) target->get_col() * dx + 4;
-                target->setGeometry(pos_x, pos_y, dx, dy);
+                target->setGeometry((int)pos_x, (int)pos_y, (int)dx, (int)dy);
             }
         }
     }
@@ -370,7 +352,7 @@ private:
                 float dx = (float)(this->GameSpace->width() - 8) / (float)(14) * 1.0f;
                 float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 4;
                 float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 4;
-                current_row[current_row.size() - 1]->setGeometry(pos_x, pos_y, dx, dy);
+                current_row[current_row.size() - 1]->setGeometry((int)pos_x, (int)pos_y, (int)dx, (int)dy);
 
                 //this->targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
 
@@ -477,14 +459,14 @@ private:
         float k = 1.5f;
         int iteration = 0;
         Ball* _ball = new Ball();
-        _ball->set_id(this->balls.size());
+        _ball->set_id((int)this->balls.size());
         _ball->setParent(this->GameSpace);
-        this->balls[this->balls.size() - 1]->x() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion() <<
-        " $$$ " <<
-        this->balls[this->balls.size() - 1]->y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion()<< std::endl;
+//        this->balls[this->balls.size() - 1]->x() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion() <<
+//        " $$$ " <<
+//        this->balls[this->balls.size() - 1]->y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion()<< std::endl;
         _ball->init(
-                this->balls[this->balls.size() - 1]->get_x() + (float)(randint((int)BALL_SIZE,(int)(BALL_SIZE * 1.5f))) * get_random_inversion(),
-                this->balls[this->balls.size() - 1]->get_y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * get_random_inversion());
+                (int)this->balls[this->balls.size() - 1]->get_x() + (randint((int)BALL_SIZE,(int)(BALL_SIZE * 1.5f))) * (int)get_random_inversion(),
+                (int)this->balls[this->balls.size() - 1]->get_y() + (randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * (int)get_random_inversion());
         bool good_spawn = false;
         while(!good_spawn){
             iteration++;
@@ -501,8 +483,8 @@ private:
                     iteration = 0;
                     k += 0.2f;
                 }
-                _ball->set_y(this->balls[this->balls.size() - 1]->y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * k))) * get_random_inversion());
-                _ball->set_x(this->balls[this->balls.size() - 1]->x() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * k))) * get_random_inversion());
+                _ball->set_y((float)this->balls[this->balls.size() - 1]->y() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * k))) * get_random_inversion());
+                _ball->set_x((float)this->balls[this->balls.size() - 1]->x() + (float)(randint((int)BALL_SIZE, (int)(BALL_SIZE * k))) * get_random_inversion());
             }
         }
         _ball->show();
@@ -611,10 +593,6 @@ public:
     void rest_game(){
         this->wipe_targets_data();
         //load_level_data(file_path);
-
-
-        this->ball_x = 256.0f;
-        this->ball_y = 512.0f;
 
         for (auto* _ball : this->balls){
             if (_ball != this->ball)
