@@ -1,12 +1,10 @@
 #include <QApplication>
-#include <QPushButton>
+//#include <QPushButton>
 #include <iostream>
 #include "./GUI/GUI.h++"
-#include "./fps_control.h++"
+//#include "./fps_control.h++"
 
-#include "./level_files_handler.h++"
-
-#include <ctime>
+//#include "./level_files_handler.h++"
 
 Ui_MainWindow* window;
 
@@ -32,13 +30,10 @@ int main(int argc, char *argv[]) {
     window->g_window->init(window);
     std::cout << "INIT DONE" << std::endl;
 
-
     window->show();
 
     window->g_window->show();
     QApplication::quitOnLastWindowClosed();
-
-
 
     enter_main_loop();
     return 0;
