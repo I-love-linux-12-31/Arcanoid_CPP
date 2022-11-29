@@ -494,6 +494,10 @@ public:
     void play_level(unsigned int level_id, bool bonus = false){
         std::cout << "Loading level by plat button..." << std::endl;
         std::string level_path = get_level_path_by_id((int)level_id, bonus);
+        if (bonus)
+            this->label_4->setText(("Bonus " + std::to_string(level_id)).c_str());
+        else
+            this->label_4->setText(std::to_string(level_id).c_str());
         this->load_level_data(level_path, (int)level_id, bonus);
         this->show();
 

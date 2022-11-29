@@ -82,10 +82,10 @@ std::string get_level_path_by_id(int id, bool bonus = false){
 
 
 unsigned int get_main_levels_count(){
-    return 5;
+    return 7;
 }
 unsigned int get_bonus_levels_count(){
-    return 3;
+    return 4;
 }
 
 

@@ -197,8 +197,9 @@ private:
     void create_new_demo_game(){
         if (this->g_window != nullptr) {
             this->g_window->rest_game();
-            this->g_window->show();
+            //this->g_window->show();
             this->hide();
+            g_window->play_level(1, false);
         }
     }
 

@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
     window->show();
 
-    window->g_window->show();
+    // window->g_window->show();
     QApplication::quitOnLastWindowClosed();
 
     auto* icon = new QIcon("../icons/Ball_triple_ico.png");
