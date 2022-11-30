@@ -17,6 +17,8 @@
 #include "Bonuses.hpp"
 #include "../physics.hpp"
 
+#include <thread>
+
 
 class Ball : public QPushButton
 {
@@ -31,7 +33,20 @@ private:
     void update_qt_pos(){
         this->setGeometry(QRect((int)this->ball_x, (int)this->ball_y, (int)BALL_SIZE, (int)BALL_SIZE));
     }
+
 public:
+    void rest_speed(){
+        auto thread_func = [this]() {
+            this->ball_speed_x = 0.0f;
+            this->ball_speed_y = 0.0f;
+            sleep(1);
+            this->ball_speed_x = BALL_SPEED_START;
+            this->ball_speed_y = BALL_SPEED_START;
+            return;
+        };
+        std::thread thr(thread_func);
+        thr.detach();
+    }
     void set_id(int id){
         this->_id = id;
         this->setText(std::to_string(id).c_str());

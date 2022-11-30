@@ -375,6 +375,9 @@ private:
 
 
     }
+    bool is_lose(){
+        return this->balls.empty();
+    }
     bool is_win(){
         if (
                 std::all_of(
@@ -397,9 +400,10 @@ private:
 
 
     void check_win_or_lose(){
+        int return_code;
         if (this->is_win()){
             std::cout << "You win !!!" << std::endl;
-            int return_code = QMessageBox::information(nullptr, "Win", "Level completed !", QMessageBox::Ok | QMessageBox::Close);
+            return_code = QMessageBox::information(nullptr, "Win", "Level completed !", QMessageBox::Ok | QMessageBox::Close);
 
             if (return_code == QMessageBox::Ok){
                 if (this->level_number < get_main_levels_count() and !this->level_bonus or
@@ -420,12 +424,26 @@ private:
                 this->mainMenu->show();
             }
         }
+        if (this->is_lose()){
+            return_code = QMessageBox::information(nullptr, "GameOver", "You lose !", QMessageBox::Retry | QMessageBox::Close);
+            if (return_code == QMessageBox::Retry){
+                std::cout << "Retrying..." << std::endl;
+                //this->rest_game();
+                this->play_level(this->level_number, this->level_bonus);
+            }
+            else {
+                this->mainMenu->show();
+                this->hide();
+            }
+        }
 
 
     }
     void load_level_data(std::string &file_path, int _level_number = 0, bool _is_bonus_level = false)
     {
         this->rest_game();
+        this->ball->set_y(this->platform_y - 128);
+        this->ball->set_x(this->platform_x);
         std::vector<std::vector<int>> data = get_map(file_path);
         for (int i = 0 ; i < this->targets.size(); i++){
             if (i >= data.size())
@@ -448,6 +466,8 @@ private:
 
         this->level_bonus = _is_bonus_level;
         this->level_number = _level_number;
+        ball->rest_speed();
+        this->move_platform();
     }
 
     void apply_bonus_triple_ball(bool _recursion = false){
@@ -492,7 +512,7 @@ private:
     }
 public:
     void play_level(unsigned int level_id, bool bonus = false){
-        std::cout << "Loading level by plat button..." << std::endl;
+        std::cout << "Loading level ..." << std::endl;
         std::string level_path = get_level_path_by_id((int)level_id, bonus);
         if (bonus)
             this->label_4->setText(("Bonus " + std::to_string(level_id)).c_str());
@@ -545,10 +565,18 @@ public:
     void new_game_iteration(){
         //this->process_ball_collisions();
         //this->move_ball();
-        for (Ball* _ball : this->balls){
+        //startBallsProcessing:
+        for (int i; i < this->balls.size();i++){
+        // for (Ball* _ball : this->balls){
+            Ball* _ball = this->balls[i];
             _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &targets, this->GameSpace, &this->bonuses, this->GameSpace);
             _ball->process_ball_collisions_with_other_balls(&this->balls);
             _ball->move();
+            if(_ball->y() + _ball->height() > (int)this->platform_y + 8){
+                this->balls.erase(this->balls.begin() + i);
+                //goto startBallsProcessing;
+                return this->new_game_iteration();
+            }
             std::cout << "";
         }
         for (Bonus* _bonus : this->bonuses){

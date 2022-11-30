@@ -45,4 +45,9 @@ unsigned int get_main_thread_fps(){
 }
 
 
+void set_slowmo_fps(){
+    current_fps = 100000;
+}
+
+
 #endif //ARCANOID_CPP_FPS_CONTROL_HPP
