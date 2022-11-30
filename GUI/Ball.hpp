@@ -88,6 +88,13 @@ public:
 
     }
 
+    void change_movement_vector(int x, int y){
+        if (x > 0 and this->ball_speed_x < 0 or x < 0 and this->ball_speed_x > 0)
+            this->ball_speed_x *= -1.0f;
+        if (y > 0 and this->ball_speed_y < 0 or y < 0 and this->ball_speed_y > 0)
+            this->ball_speed_y *= -1.0f;
+    }
+
     void move(){
         if (current_fps < 1)
             current_fps = 256;

@@ -482,6 +482,7 @@ private:
         _ball->init(
                 (int)this->balls[this->balls.size() - 1]->get_x() + (randint((int)BALL_SIZE,(int)(BALL_SIZE * 1.5f))) * (int)get_random_inversion(),
                 (int)this->balls[this->balls.size() - 1]->get_y() + (randint((int)BALL_SIZE, (int)(BALL_SIZE * 1.5f))) * (int)get_random_inversion());
+        this->ball->change_movement_vector((int)this->balls[this->balls.size() - 1]->get_x(), (int)this->balls[this->balls.size() - 1]->get_y());
         bool good_spawn = false;
         while(!good_spawn){
             iteration++;
@@ -572,7 +573,15 @@ public:
             _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &targets, this->GameSpace, &this->bonuses, this->GameSpace);
             _ball->process_ball_collisions_with_other_balls(&this->balls);
             _ball->move();
-            if(_ball->y() + _ball->height() > (int)this->platform_y + 8){
+            if(_ball->y() + _ball->height() > (int)this->platform_y + platform->height()){
+                if (this->balls[i] != this->ball)
+                {
+                    this->balls[i]->hide();
+                    delete this->balls[i];
+                }
+                else {
+                    this->ball->set_y(-64);
+                }
                 this->balls.erase(this->balls.begin() + i);
                 //goto startBallsProcessing;
                 return this->new_game_iteration();
