@@ -19,6 +19,8 @@
 
 #include <thread>
 
+#include<unistd.h>
+
 
 class Ball : public QPushButton
 {
