@@ -88,7 +88,7 @@ private:
 
     QMainWindow *mainMenu;
 
-    std::vector<std::vector<TargetBlock*>> targets;
+    std::vector<std::vector<TargetBlock*>*> targets;
 
     std::vector<Ball*> balls;
 
@@ -323,55 +323,34 @@ private:
 
 
         for (auto block : this->targets){
-            for (auto target : block) {
-                float dy = (float) (this->GameSpace->height() - 256 - 8) / (float) (13) * 1.1f;
-                float dx = (float) (this->GameSpace->width() - 8) / (float) (14) * 1.0f;
+            for (auto target : *block) {
+                float dy = (float) (this->GameSpace->height() - 256 - 8) / (float) (this->targets.size()) * 1.1f;
+                float dx = (float) (this->GameSpace->width() - 8) / (float) (this->targets[0]->size()) * 1.0f;
                 float pos_y = (float) target->get_row() * dy + 4;
                 float pos_x = (float) target->get_col() * dx + 4;
                 target->setGeometry((int)pos_x, (int)pos_y, (int)dx, (int)dy);
+                std::cout << "RESIZE ::" << (int)pos_x << " " << (int)pos_y << " " << (int)dx << " " << (int)dy << std::endl;
             }
         }
     }
 
-    void create_demo_blocks(){
-        for (int row = 0; row < 13;row++){
-            std::vector<TargetBlock*> current_row;
-            for (int col = 0; col < 14;col++){
-                current_row.push_back(new TargetBlock());
-                current_row[current_row.size() - 1]->set_hp(-1);
-                current_row[current_row.size() - 1]->set_row(row);
-                current_row[current_row.size() - 1]->set_col(col);
-                current_row[current_row.size() - 1]->setParent(this->GameSpace);
-                float dy = (float)(this->GameSpace->height() - 128 - 8) / (float)(13) * 1.1f;
-                float dx = (float)(this->GameSpace->width() - 8) / (float)(14) * 1.0f;
-                float pos_y = (float)current_row[current_row.size() - 1]->get_row() * dy + 4;
-                float pos_x = (float)current_row[current_row.size() - 1]->get_col() * dx + 4;
-                current_row[current_row.size() - 1]->setGeometry((int)pos_x, (int)pos_y, (int)dx, (int)dy);
 
-                //this->targetsLayout->addWidget(current_row[current_row.size() - 1], row, col);
-
-            }
-            this->targets.push_back(current_row);
-        }
-    }
 
     void wipe_targets_data(){
         this->platform_weight = 256;
         score = 0;
-        // todo : Lock main game thread ?!!!
-       // int new_hp = randint(1, 4);
-        for (auto block : this->targets){
-//            while (!block.empty()){
-//                delete block[0];
-//                block.erase(block.begin());
-//            }
 
-            for (auto* element : block){
-                element->set_hp(0); // randint(1, 4)
-                element->update_color();
+        for (auto* block : this->targets) {
+            // WTF block is vector<vector> !!!
+            for (int i = 0; i < block->size(); i++) {
+                for (int j = 0; j < block[i].size(); j++)
+                    delete block[i][j];
+                block[i].clear();
 
             }
+            block->clear();
         }
+        this->targets.clear();
 
 
     }
@@ -383,9 +362,9 @@ private:
                 std::all_of(
                         this->targets.begin(),
                         this->targets.end(),
-                        [](std::vector<TargetBlock *> line)
+                        [](std::vector<TargetBlock *>* line)
                         {
-                            return std::all_of(line.begin(), line.end(),
+                            return std::all_of(line->begin(), line->end(),
                                                [](TargetBlock* i)
                                                {
                                                    return i->is_dead();
@@ -445,20 +424,22 @@ private:
         this->ball->set_y(this->platform_y - 128);
         this->ball->set_x(this->platform_x);
         std::vector<std::vector<int>> data = get_map(file_path);
-        for (int i = 0 ; i < this->targets.size(); i++){
-            if (i >= data.size())
-                continue;
 
-            for (int j = 0 ; j < this->targets[i].size(); j++){
-                if (j >= data[i].size())
-                    continue;
+        //this->targets.clear();
+        for (int i = 0 ; i < data.size(); i++){
+            this->targets.push_back(new std::vector<TargetBlock*>());
+            for (int j = 0 ; j < data[0].size(); j++){
+                this->targets[i]->push_back(new TargetBlock());
+                (*this->targets[i])[j]->setParent(this->GameSpace);
+                (*this->targets[i])[j]->set_row(i);
+                (*this->targets[i])[j]->set_col(j);
                 if (data[i][j] >= 0) {
-                    this->targets[i][j]->set_bonus(false);
-                    this->targets[i][j]->set_hp(data[i][j]);
+                    (*this->targets[i])[j]->set_bonus(false);
+                    (*this->targets[i])[j]->set_hp(data[i][j]);
                 }
                 else {
-                    this->targets[i][j]->set_bonus(true);
-                    this->targets[i][j]->set_hp(data[i][j] * -1);
+                    (*this->targets[i])[j]->set_bonus(true);
+                    (*this->targets[i])[j]->set_hp(data[i][j] * -1);
                 }
 
             }
@@ -468,6 +449,8 @@ private:
         this->level_number = _level_number;
         ball->rest_speed();
         this->move_platform();
+
+        this->onResize();
     }
 
     void apply_bonus_triple_ball(bool _recursion = false){
@@ -554,7 +537,7 @@ public:
         if (DEBUG_BACKGROUND)
             this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
 
-        this->create_demo_blocks();
+        // this->create_demo_blocks();
         this->wipe_targets_data();
 
         std::cout << "Level path :" << std::endl;
@@ -570,7 +553,7 @@ public:
         for (int i; i < this->balls.size();i++){
         // for (Ball* _ball : this->balls){
             Ball* _ball = this->balls[i];
-            _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &targets, this->GameSpace, &this->bonuses, this->GameSpace);
+            _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &this->targets, this->GameSpace, &this->bonuses, this->GameSpace);
             _ball->process_ball_collisions_with_other_balls(&this->balls);
             _ball->move();
             if(_ball->y() + _ball->height() > (int)this->platform_y + platform->height()){

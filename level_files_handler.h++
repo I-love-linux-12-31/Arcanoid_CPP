@@ -85,7 +85,7 @@ unsigned int get_main_levels_count(){
     return 8;
 }
 unsigned int get_bonus_levels_count(){
-    return 4;
+    return 5;
 }
 
 

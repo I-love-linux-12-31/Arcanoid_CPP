@@ -110,7 +110,7 @@ public:
                           });
     }
 
-    void process_ball_collisions(float platform_x, float platform_y, float platform_w, float platform_h, std::vector<std::vector<TargetBlock*>>* targets, QWidget* GameSpace, std::vector<Bonus*>* bonuses, QWidget* parent){
+    void process_ball_collisions(float platform_x, float platform_y, float platform_w, float platform_h, std::vector<std::vector<TargetBlock*>*>* targets, QWidget* GameSpace, std::vector<Bonus*>* bonuses, QWidget* parent){
         bool next_move_required = false;
         // Walls
         if (this->ball_y > (float)GameSpace->height() - BALL_SIZE) {
@@ -155,7 +155,7 @@ public:
 
         // blocks
         for (auto row : *targets){
-            for (auto target : row){
+            for (auto target : *row){
                 if (!target->is_dead()) {
                     // Vertical
                     if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
