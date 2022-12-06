@@ -68,13 +68,20 @@ private:
 //    }
 
 public:
-    const void onLevelSelectButtonPushed(){
+    void onLevelSelectButtonPushed(){
         this->levelSelectMenu->show();
     }
     void init(){
         this->setupUi();
         this->levelSelectMenu = new LevelSelectMenu();
         this->levelSelectMenu->init(this->g_window, this);
+    }
+
+    void onNewGameButtonPushed(){
+        if (this->g_window->aborted_by_esc)
+            this->g_window->show();
+        else
+            create_new_demo_game();
     }
     void setupUi()
     {
@@ -114,7 +121,7 @@ public:
         pushButton->setMaximumSize(QSize(256, 16777215));
         pushButton->setFont(font);
 
-        QObject::connect(pushButton, &QPushButton::clicked, this, &Ui_MainWindow::create_new_demo_game);
+        QObject::connect(pushButton, &QPushButton::clicked, this, &Ui_MainWindow::onNewGameButtonPushed);
 
         verticalLayout->addWidget(pushButton);
 
@@ -191,9 +198,19 @@ private:
 
     bool eventFilter(QObject *object, QEvent *event)
     {
+        if (this->g_window != nullptr and this->g_window->aborted_by_esc)
+            this->pushButton->setText("Continue");
+        else
+            this->pushButton->setText("New Game");
+
         if (event->type() == QEvent::KeyPress) {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+            auto* keyEvent = static_cast<QKeyEvent *>(event);
             if (keyEvent->key() == Qt::Key_Escape and !this->isHidden()) {
+                if (this->g_window != nullptr and this->g_window->aborted_by_esc){
+                    this->g_window->show();
+                    this->hide();
+                    return true;
+                }
                 std::cout << "Exiting..." << std::endl;
                 QApplication::exit(0);
                 exit(0);

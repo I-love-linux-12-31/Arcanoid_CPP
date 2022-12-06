@@ -49,6 +49,24 @@ public:
         std::thread thr(thread_func);
         thr.detach();
     }
+    void freeze_ball(){
+        auto thread_func = [this]() {
+            float old_sx = this->ball_speed_x;
+            float old_sy = this->ball_speed_y;
+            this->ball_speed_x = 0.0f;
+            this->ball_speed_y = 0.0f;
+            sleep(1);
+            this->ball_speed_x = old_sx;
+            this->ball_speed_y = old_sy;
+            if (old_sx == 0.0f and old_sy == 0.0f){
+                this->ball_speed_x = BALL_SPEED_START;
+                this->ball_speed_y = BALL_SPEED_START;
+            }
+            return;
+        };
+        std::thread thr(thread_func);
+        thr.detach();
+    }
     void set_id(int id){
         this->_id = id;
         this->setText(std::to_string(id).c_str());

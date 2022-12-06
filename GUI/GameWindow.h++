@@ -45,6 +45,7 @@ const bool DEBUG_BACKGROUND = false;
 class GameWindow : public QWidget
 {
 public:
+    bool aborted_by_esc = false;
     std::vector<Bonus*> bonuses;
     QWidget *GameSpace;
     float platform_x = 0.0f;
@@ -123,6 +124,7 @@ private:
                 std::cout << "ESC" << std::endl;
                 Form->hide();
                 Form->mainMenu->show();
+                this->aborted_by_esc = true;
                 return true;
             }
         }
@@ -382,8 +384,8 @@ private:
         int return_code;
         if (this->is_win()){
             std::cout << "You win !!!" << std::endl;
+            this->aborted_by_esc = false;
             return_code = QMessageBox::information(nullptr, "Win", "Level completed !", QMessageBox::Ok | QMessageBox::Close);
-
             if (return_code == QMessageBox::Ok){
                 if (this->level_number < get_main_levels_count() and !this->level_bonus or
                 this->level_number < get_bonus_levels_count() and this->level_bonus) {
@@ -404,6 +406,7 @@ private:
             }
         }
         if (this->is_lose()){
+            this->aborted_by_esc = true;
             return_code = QMessageBox::information(nullptr, "GameOver", "You lose !", QMessageBox::Retry | QMessageBox::Close);
             if (return_code == QMessageBox::Retry){
                 std::cout << "Retrying..." << std::endl;
@@ -514,6 +517,9 @@ public:
             this->mainMenu->hide();
         this->grabKeyboard();
         this->installEventFilter(this);
+        for (auto* ball : this->balls){
+            ball->freeze_ball();
+        }
         return QWidget::show();
     }
 
