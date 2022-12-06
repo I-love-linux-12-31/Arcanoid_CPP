@@ -121,7 +121,7 @@
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgba(68, 8, 8,64);
+          <string notr="true">background-color: rgba(64, 24, 24,64);
 color: rgb(165, 29, 45);</string>
          </property>
          <property name="text">

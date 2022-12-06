@@ -23,6 +23,8 @@
 #include "TargetBlock.hpp"
 #include "LevelSelectMenu.hpp"
 
+#include "AboutForm.hpp"
+
 QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow :public QMainWindow
@@ -45,6 +47,7 @@ private:
     QPushButton *pushButton_3;
     QWidget *widget_3;
     QStatusBar *statusbar;
+    Ui::AboutForm *aboutForm;
 
 
 //    bool event(QEvent *event) {
@@ -76,6 +79,8 @@ public:
     void setupUi()
     {
         auto MainWindow = this;
+        aboutForm = new Ui::AboutForm();
+        aboutForm->setupUi(aboutForm);
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
         MainWindow->resize(640, 480);
@@ -126,6 +131,11 @@ public:
         pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
         pushButton_4->setMaximumSize(QSize(256, 16777215));
         pushButton_4->setFont(font);
+        QObject::connect(pushButton_4, &QPushButton::clicked, this, [this]() {
+            this->aboutForm->show();
+            return;
+        }
+        );
 
         verticalLayout->addWidget(pushButton_4);
 
@@ -134,7 +144,7 @@ public:
         pushButton_3->setObjectName(QString::fromUtf8("pushButton_3"));
         pushButton_3->setMaximumSize(QSize(256, 16777215));
         pushButton_3->setFont(font);
-        pushButton_3->setStyleSheet(QString::fromUtf8("background-color: rgba(68, 8, 8,64);\n"
+        pushButton_3->setStyleSheet(QString::fromUtf8("background-color: rgba(68, 24, 24,64);\n"
                                                       "color: rgb(165, 29, 45);"));
         QObject::connect(pushButton_3, &QPushButton::clicked, this, &Ui_MainWindow::onExitButtonPush);
 
