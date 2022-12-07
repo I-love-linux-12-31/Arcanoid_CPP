@@ -65,6 +65,7 @@ public:
 private:
     int level_number = 0;
     bool level_bonus = false;
+    std::string _level_path = "";
 
     QVBoxLayout *verticalLayout;
     QWidget *widget_3;
@@ -341,6 +342,10 @@ private:
     void wipe_targets_data(){
         this->platform_weight = 256;
         score = 0;
+        for (int n = 0 ; n < this->bonuses.size(); n++){
+            delete this->bonuses[n];
+        }
+        this->bonuses.clear();
 
         for (auto* block : this->targets) {
             // WTF block is vector<vector> !!!
@@ -411,7 +416,11 @@ private:
             if (return_code == QMessageBox::Retry){
                 std::cout << "Retrying..." << std::endl;
                 //this->rest_game();
-                this->play_level(this->level_number, this->level_bonus);
+                if (!this->_level_path.empty())
+                    this->play_level_by_path(this->_level_path);
+                else
+                    this->play_level(this->level_number, this->level_bonus);
+
             }
             else {
                 this->mainMenu->show();
@@ -499,6 +508,7 @@ private:
     }
 public:
     void play_level(unsigned int level_id, bool bonus = false){
+        this->_level_path = "";
         std::cout << "Loading level ..." << std::endl;
         std::string level_path = get_level_path_by_id((int)level_id, bonus);
         if (bonus)
@@ -506,6 +516,14 @@ public:
         else
             this->label_4->setText(std::to_string(level_id).c_str());
         this->load_level_data(level_path, (int)level_id, bonus);
+        this->show();
+
+    }
+    void play_level_by_path(std::string _filepath){
+        this->_level_path = _filepath;
+        std::cout << "Loading level by path..." << std::endl;
+        this->label_4->setText(("Custom level: " + _filepath).c_str());
+        this->load_level_data(_filepath);
         this->show();
 
     }

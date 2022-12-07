@@ -18,6 +18,7 @@
 #include <QtWidgets/QWidget>
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include "GameWindow.h++"
 #include "TargetBlock.hpp"
@@ -43,6 +44,7 @@ private:
     QLabel *label;
     QPushButton *pushButton;
     QPushButton *pushButton_2;
+    QPushButton *pushButton_LoadCustomLevel;
     QPushButton *pushButton_4;
     QPushButton *pushButton_3;
     QWidget *widget_3;
@@ -82,6 +84,13 @@ public:
             this->g_window->show();
         else
             create_new_demo_game();
+    }
+
+    void onCustomLevelPlayPushed(){
+        QString fileName = QFileDialog::getOpenFileName(this, ("Open File"), "/home", ("Level file (*.txt *.level)"));
+             //std::wcout << fileName << std::endl;
+         std::cout << "selected file path : " << fileName.toStdString() << std::endl;
+        this->g_window->play_level_by_path(fileName.toStdString());
     }
     void setupUi()
     {
@@ -134,11 +143,26 @@ public:
 
         verticalLayout->addWidget(pushButton_2);
 
+        pushButton_LoadCustomLevel = new QPushButton(widget);
+
+        pushButton_LoadCustomLevel->setMaximumSize(QSize(256, 16777215));
+        pushButton_LoadCustomLevel->setFont(font);
+
+        verticalLayout->addWidget(pushButton_LoadCustomLevel);
+
+        QObject::connect(pushButton_LoadCustomLevel, &QPushButton::clicked, this, &Ui_MainWindow::onCustomLevelPlayPushed);
+
         pushButton_4 = new QPushButton(widget);
         pushButton_4->setObjectName(QString::fromUtf8("pushButton_4"));
         pushButton_4->setMaximumSize(QSize(256, 16777215));
         pushButton_4->setFont(font);
         QObject::connect(pushButton_4, &QPushButton::clicked, this, [this]() {
+
+//             QString fileName = QFileDialog::getOpenFileName(this, ("Open File"),
+//                                                             "/home",
+//                                                             ("Level file (*.txt *.level)"));
+//             //std::wcout << fileName << std::endl;
+//             std::cout << "selected file path : " << fileName.toStdString();
             this->aboutForm->show();
             return;
         }
@@ -194,6 +218,7 @@ private:
         pushButton_2->setText(QCoreApplication::translate("MainWindow", "Levels", nullptr));
         pushButton_4->setText(QCoreApplication::translate("MainWindow", "About", nullptr));
         pushButton_3->setText(QCoreApplication::translate("MainWindow", "Exit", nullptr));
+        pushButton_LoadCustomLevel->setText(QCoreApplication::translate("MainWindow", "Load custom level", nullptr));
     } // retranslateUi
 
     bool eventFilter(QObject *object, QEvent *event)
