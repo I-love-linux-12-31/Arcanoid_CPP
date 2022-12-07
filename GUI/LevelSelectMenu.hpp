@@ -20,7 +20,7 @@
 #include "MainMenu.hpp"
 #endif
 
-#include "../level_files_handler.h++"
+#include "../level_files_handler.hpp"
 
 QT_BEGIN_NAMESPACE
 

@@ -11,7 +11,7 @@
 
 #include <string>
 
-#include "../fps_control.h++"
+#include "../fps_control.hpp"
 const unsigned int BONUS_TYPE_RANDOM = 0;
 const unsigned int BONUS_TYPE_TRIPLE_BALL = 1;
 const unsigned int BONUS_TYPE_TRIPLE_SPEED_UP2 = 2;

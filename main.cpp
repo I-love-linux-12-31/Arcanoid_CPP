@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <iostream>
-#include "./GUI/GUI.h++"
+#include "./GUI/GUI.hpp"
 
 #include <chrono>
 #include <thread>

@@ -11,7 +11,7 @@
 #include <QtWidgets/QPushButton>
 
 #include "../game_consts_and_globals.hpp"
-#include "../fps_control.h++"
+#include "../fps_control.hpp"
 
 #include "TargetBlock.hpp"
 #include "Bonuses.hpp"

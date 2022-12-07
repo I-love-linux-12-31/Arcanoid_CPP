@@ -25,9 +25,9 @@
 #include "MainMenu.hpp"
 #endif
 
-#include "../fps_control.h++"
-#include "../random.h++"
-#include "../level_files_handler.h++"
+#include "../fps_control.hpp"
+#include "../random.hpp"
+#include "../level_files_handler.hpp"
 #include "../game_consts_and_globals.hpp"
 
 #include "Ball.hpp"

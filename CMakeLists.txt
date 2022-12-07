@@ -17,17 +17,17 @@ find_package(Qt6 COMPONENTS
 
 add_executable(Arcanoid_cpp
         main.cpp
-        ./GUI/GUI.h++
+        GUI/GUI.hpp
         ./GUI/MainMenu.hpp
-        ./GUI/GameWindow.h++
-        ./GUI/UIElements.h++
+        GUI/GameWindow.hpp
+        GUI/UIElements.hpp
         ./GUI/Ball.hpp
         ./GUI/Bonuses.hpp
         GUI/LevelSelectMenu.hpp
         game_consts_and_globals.hpp
-        fps_control.h++
-        random.h++
-        level_files_handler.h++
+        fps_control.hpp
+        random.hpp
+        level_files_handler.hpp
         physics.hpp
         )
 target_link_libraries(Arcanoid_cpp

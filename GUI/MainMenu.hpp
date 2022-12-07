@@ -20,7 +20,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 
-#include "GameWindow.h++"
+#include "GameWindow.hpp"
 #include "TargetBlock.hpp"
 #include "LevelSelectMenu.hpp"
 
