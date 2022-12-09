@@ -7,7 +7,8 @@
 
 # Requirements:
 If you use wayland install wayland versions of dependencies 
-## Debian like:
+## Debian like: 
+
 runtime only:
 * libglfw3
 

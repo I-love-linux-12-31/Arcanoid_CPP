@@ -390,7 +390,7 @@ private:
         if (this->is_win()){
             std::cout << "You win !!!" << std::endl;
             this->aborted_by_esc = false;
-            return_code = QMessageBox::information(nullptr, "Win", "Level completed !", QMessageBox::Ok | QMessageBox::Close);
+            return_code = QMessageBox::information(this, "Win", "Level completed !", QMessageBox::Ok | QMessageBox::Close);
             if (return_code == QMessageBox::Ok){
                 if (this->level_number < get_main_levels_count() and !this->level_bonus or
                 this->level_number < get_bonus_levels_count() and this->level_bonus) {
@@ -412,7 +412,7 @@ private:
         }
         if (this->is_lose()){
             this->aborted_by_esc = true;
-            return_code = QMessageBox::information(nullptr, "GameOver", "You lose !", QMessageBox::Retry | QMessageBox::Close);
+            return_code = QMessageBox::information(this, "GameOver", "You lose !", QMessageBox::Retry | QMessageBox::Close);
             if (return_code == QMessageBox::Retry){
                 std::cout << "Retrying..." << std::endl;
                 //this->rest_game();

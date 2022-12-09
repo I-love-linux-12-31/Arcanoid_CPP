@@ -90,6 +90,8 @@ public:
         QString fileName = QFileDialog::getOpenFileName(this, ("Open File"), "/home", ("Level file (*.txt *.level)"));
              //std::wcout << fileName << std::endl;
          std::cout << "selected file path : " << fileName.toStdString() << std::endl;
+         if (fileName.isEmpty())
+             return;
         this->g_window->play_level_by_path(fileName.toStdString());
     }
     void setupUi()
