@@ -157,8 +157,9 @@ public:
         // Platform
         if (this->ball_y + BALL_SIZE > platform_y and this->ball_x + 0.0f < platform_x + platform_w and this->ball_x > platform_x){
             //std::cout<<"Colide" << std::endl;
-            this->ball_speed_y *= -1.0f;
-            next_move_required = true;
+            if (this->ball_speed_y > 0)
+                this->ball_speed_y *= -1.0f;
+            this->move();
         }
         if (
                 (this->ball_y + BALL_SIZE / 2 > platform_y and this->ball_y + BALL_SIZE / 2 < platform_y + platform_h
