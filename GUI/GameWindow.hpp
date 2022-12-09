@@ -320,7 +320,7 @@ private:
     }
 
     void onResize(){
-        std::cout << "onResize !\n";
+        // std::cout << "onResize !\n";
         this->platform_y = (float)this->height() - 94.0f;
         this->platform->setGeometry((int)platform_x, (int)platform_y, platform_weight, 32);
 
@@ -332,7 +332,7 @@ private:
                 float pos_y = (float) target->get_row() * dy + 4;
                 float pos_x = (float) target->get_col() * dx + 4;
                 target->setGeometry((int)pos_x, (int)pos_y, (int)dx, (int)dy);
-                std::cout << "RESIZE ::" << (int)pos_x << " " << (int)pos_y << " " << (int)dx << " " << (int)dy << std::endl;
+                //std::cout << "RESIZE ::" << (int)pos_x << " " << (int)pos_y << " " << (int)dx << " " << (int)dy << std::endl;
             }
         }
     }
@@ -636,12 +636,24 @@ public:
                         this->platform_weight += 64;
                         this->move_platform();
                         break;
+                    case BONUS_TYPE_PLATFORM_SIZE_MIN:
+                        if (this->platform->width() > 128)
+                            this->platform_weight -= 64;
+                        this->move_platform();
+                        break;
+                    case BONUS_TYPE_PLATFORM_SPEED_MIN:
+                        if (this->platform_speed_multiple > 0.25f)
+                            this->platform_speed_multiple -= 0.1f;
+                        this->move_platform();
+                        break;
                 }
             }
         }
     }
 
     void rest_game(){
+        this->platform_speed_multiple = 1.0f;
+
         this->wipe_targets_data();
         //load_level_data(file_path);
 

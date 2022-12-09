@@ -175,18 +175,18 @@ public:
         // blocks
         for (auto row : *targets){
             for (auto target : *row){
+                bool required_create_bonus = false;
+                bool required_create_debuff = false;
                 if (!target->is_dead()) {
                     // Vertical
                     if (this->ball_y < target->y() + target->height() and this->ball_y + BALL_SIZE > target->y() and this->ball_x + BALL_SIZE / 2 < target->x() + target->width() and
                         this->ball_x + BALL_SIZE / 2 > target->x()) {
                         //target->setText("X");
                         if (target->hit_block() and target->is_bonus()){
-                            bonuses->push_back(new Bonus());
-                            (*bonuses)[bonuses->size() - 1]->setParent(parent);
-                            (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
-                            (*bonuses)[bonuses->size() - 1]->init();
-
-                            std::cout << "Bonus !!!!" << std::endl;
+                            required_create_bonus = true;
+                        }
+                        if (target->is_dead() and randint(0, 100) < 7){
+                            required_create_debuff = true;
                         }
                         //target->kill_target();
                         //score += 1;
@@ -208,12 +208,10 @@ public:
                         //target->kill_target();
                         //score += 1;
                         if (target->hit_block() and target->is_bonus()){
-                            bonuses->push_back(new Bonus());
-                            (*bonuses)[bonuses->size() - 1]->setParent(parent);
-                            (*bonuses)[bonuses->size() - 1]->setGeometry(this->ball_x, this->ball_y, 64, 64);
-                            (*bonuses)[bonuses->size() - 1]->init();
-
-                            std::cout << "Bonus !!!!" << std::endl;
+                            required_create_bonus = true;
+                        }
+                        if (target->is_dead() and randint(0, 100) < 7){
+                            required_create_debuff = true;
                         }
                         this->ball_speed_x *= -1.0f;
                         next_move_required = true;
@@ -226,6 +224,34 @@ public:
                                 )
                             this->move();
                     }
+
+                    if (required_create_bonus and required_create_debuff){
+                        bonuses->push_back(new Bonus());
+                        (*bonuses)[bonuses->size() - 1]->setParent(parent);
+                        (*bonuses)[bonuses->size() - 1]->setGeometry((int)this->ball_x - 32, (int)this->ball_y, 64, 64);
+                        (*bonuses)[bonuses->size() - 1]->init();
+                        bonuses->push_back(new Bonus());
+                        (*bonuses)[bonuses->size() - 1]->setParent(parent);
+                        (*bonuses)[bonuses->size() - 1]->setGeometry((int)this->ball_x + 32, (int)this->ball_y, 64, 64);
+                        (*bonuses)[bonuses->size() - 1]->init(BONUS_TYPE_RANDOM_NEGATIVE);
+                    }
+                    else
+                    {
+                        if (required_create_bonus) {
+                            bonuses->push_back(new Bonus());
+                            (*bonuses)[bonuses->size() - 1]->setParent(parent);
+                            (*bonuses)[bonuses->size() - 1]->setGeometry((int)this->ball_x, (int)this->ball_y, 64, 64);
+                            (*bonuses)[bonuses->size() - 1]->init();
+                        }
+                        if (required_create_debuff) {
+                            bonuses->push_back(new Bonus());
+                            (*bonuses)[bonuses->size() - 1]->setParent(parent);
+                            (*bonuses)[bonuses->size() - 1]->setGeometry((int)this->ball_x, (int)this->ball_y, 64, 64);
+                            (*bonuses)[bonuses->size() - 1]->init(BONUS_TYPE_RANDOM_NEGATIVE);
+                        }
+                    }
+
+
                 }
             }
         }

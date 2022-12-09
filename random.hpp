@@ -14,7 +14,11 @@ void init_random(){
 }
 
 int randint(int a, int b){
-    return (rand()%b)+a;
+    int rnd = (rand()%b)+a;
+    if (rnd >= a and rnd <= b){
+        return rnd;
+    }
+    return a + rnd % (b - a + 1);
 }
 
 float get_random_percent(){

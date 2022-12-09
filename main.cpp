@@ -47,6 +47,7 @@ int main(int argc, char *argv[]) {
     std::cout << "INIT" << std::endl;
     window->g_window = new GameWindow();
     window->init();
+    init_random();
     window->g_window->init(window);
     std::cout << "INIT DONE" << std::endl;
 
