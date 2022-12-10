@@ -388,6 +388,7 @@ private:
     void check_win_or_lose(){
         int return_code;
         if (this->is_win()){
+            this->releaseKeyboard();
             std::cout << "You win !!!" << std::endl;
             this->aborted_by_esc = false;
             return_code = QMessageBox::information(this, "Win", "Level completed !", QMessageBox::Ok | QMessageBox::Close);
@@ -409,8 +410,10 @@ private:
                 this->hide();
                 this->mainMenu->show();
             }
+            this->grabKeyboard();
         }
         if (this->is_lose()){
+            this->releaseKeyboard();
             this->aborted_by_esc = true;
             return_code = QMessageBox::information(this, "GameOver", "You lose !", QMessageBox::Retry | QMessageBox::Close);
             if (return_code == QMessageBox::Retry){
@@ -426,6 +429,8 @@ private:
                 this->mainMenu->show();
                 this->hide();
             }
+            this->grabKeyboard();
+
         }
 
 
@@ -643,7 +648,7 @@ public:
                         break;
                     case BONUS_TYPE_PLATFORM_SPEED_MIN:
                         if (this->platform_speed_multiple > 0.25f)
-                            this->platform_speed_multiple -= 0.1f;
+                            this->platform_speed_multiple -= 0.2f;
                         this->move_platform();
                         break;
                 }

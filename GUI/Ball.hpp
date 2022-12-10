@@ -185,7 +185,10 @@ public:
                         if (target->hit_block() and target->is_bonus()){
                             required_create_bonus = true;
                         }
-                        if (target->is_dead() and randint(0, 100) < 7){
+                        if (target->is_dead() and randint(0, 100) < 10){
+                            required_create_debuff = true;
+                        }
+                        if (target->is_dead() and target->is_bonus() and randint(0, 100) < 33){
                             required_create_debuff = true;
                         }
                         //target->kill_target();
@@ -210,7 +213,7 @@ public:
                         if (target->hit_block() and target->is_bonus()){
                             required_create_bonus = true;
                         }
-                        if (target->is_dead() and randint(0, 100) < 7){
+                        if (target->is_dead() and randint(0, 100) < 10){
                             required_create_debuff = true;
                         }
                         this->ball_speed_x *= -1.0f;
@@ -246,7 +249,7 @@ public:
                         if (required_create_debuff) {
                             bonuses->push_back(new Bonus());
                             (*bonuses)[bonuses->size() - 1]->setParent(parent);
-                            (*bonuses)[bonuses->size() - 1]->setGeometry((int)this->ball_x, (int)this->ball_y, 64, 64);
+                            (*bonuses)[bonuses->size() - 1]->setGeometry((int)this->ball_x - 16, (int)this->ball_y, 64, 64);
                             (*bonuses)[bonuses->size() - 1]->init(BONUS_TYPE_RANDOM_NEGATIVE);
                         }
                     }

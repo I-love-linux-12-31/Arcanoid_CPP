@@ -9,36 +9,30 @@ Ui_MainWindow* window;
 
 void enter_main_loop()
 {
-    auto start = std::chrono::steady_clock::now();
-    while (true){
-        //++frames;
-        auto now = std::chrono::steady_clock::now();
-        auto diff = now - start;
-        auto end = now + std::chrono::milliseconds(8);
-        if(diff >= std::chrono::seconds(1))
-        {
-            start = now;
-            std::cout << "FPS: " << frames << std::endl;
 
-        }
+    while (true){
+        auto now = std::chrono::steady_clock::now();
+        auto end = now + std::chrono::milliseconds(8);
+
         QApplication::processEvents();
-        next_frame();
+
         if (!window->g_window->isHidden()){
             window->g_window->new_game_iteration();
         }
         if (window->g_window->isHidden() and window->isHidden())
             exit(0);
 
+        next_frame();
         std::this_thread::sleep_until(end);
     }
 }
 int main(int argc, char *argv[]) {
-    glfwInit();
+    glfwInit(); // Инициализация OpenGL и GLFW
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // раскомментируйте эту строку, если используете macOS
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // Для корректной работы под macOS
 #endif
 
 
@@ -53,12 +47,10 @@ int main(int argc, char *argv[]) {
 
     window->show();
 
-    // window->g_window->show();
     QApplication::quitOnLastWindowClosed();
 
     auto* icon = new QIcon("../icons/Ball_triple_ico.png");
     QApplication::setWindowIcon(*icon);
     enter_main_loop();
     return 0;
-    //return QApplication::exec();
 }
