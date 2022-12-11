@@ -14,11 +14,9 @@
 
 #include <iostream>
 
-time_t current_time;
+
 int frames = 0;
 unsigned int current_fps = 1024;
-
-unsigned int target_fps = 60;
 
 double lastTime = 0.0;
 
@@ -28,9 +26,7 @@ void next_frame(){
     frames++;
 
     if ( delta >= 1.0 ){ // If last cout was more than 1 sec ago
-        // std::cout << "FPS :" << 1000.0/ (double)frames << std::endl;
-        std::cout << "FPS alt :" << current_fps << std::endl;
-
+        std::cout << "FPS :" << current_fps << std::endl;
         current_fps = (int)(frames / delta);
         frames = 0;
         lastTime = currentTime;
@@ -38,15 +34,10 @@ void next_frame(){
     }
 
 unsigned int get_main_thread_fps(){
-    if (current_fps < 16){
-        return 16;
+    if (current_fps < 1){
+        return 1;
     }
     return current_fps;
-}
-
-
-void set_slowmo_fps(){
-    current_fps = 100000;
 }
 
 

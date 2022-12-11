@@ -12,7 +12,7 @@
 
 
 bool is_delimiter(char c){
-    for (char i : " \t\n")
+    for (char i : " \t\n;")
         if (c == i)
             return true;
     return false;
@@ -55,18 +55,10 @@ std::vector<std::vector<int>> get_map(std::string &file_path){
     }
 
     std::string buffer;
-    //getline(file, buffer); // bugfix
     std::cout << " Reading..." << std::endl;
     while(getline(file, buffer)){
         result.push_back(split(buffer));
     }
-    for (auto line : result){
-        for (int i : line){
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-    }
-
     return result;
 }
 
