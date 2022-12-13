@@ -54,7 +54,7 @@ public:
     float platform_speed_multiple = 1.0f;
 
 
-    int platform_weight = 256;
+    int platform_weight = 190;
     QPushButton *platform;
 
 
@@ -340,7 +340,7 @@ private:
 
 
     void wipe_targets_data(){
-        this->platform_weight = 256;
+        this->platform_weight = 190;
         score = 0;
         for (int n = 0 ; n < this->bonuses.size(); n++){
             delete this->bonuses[n];
