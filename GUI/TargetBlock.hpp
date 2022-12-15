@@ -121,10 +121,6 @@ public:
         //this->setStyleSheet(" background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,     stop: 0 rgba(68, 8, 8, 175), stop: 1 rgba(68, 8, 8, 175));");
         this->hide();
     }
-    void create(int _col, int _row){
-        this->set_col(_col);
-        this->set_row(_row);
-    }
 };
 
 #endif //ARCANOID_CPP_TARGETBLOCK_HPP

@@ -84,10 +84,6 @@ private:
 
     const float BALL_SIZE = 16.0f;
 
-    time_t time;
-    int frames = 0;
-    unsigned int current_fps = 256;
-
     QMainWindow *mainMenu;
 
     std::vector<std::vector<TargetBlock*>*> targets;
@@ -96,20 +92,8 @@ private:
 
 
 
-
-
     bool eventFilter(QObject *object, QEvent *event)
     {
-        //std::cout << std::time(0) << std::endl;
-        if (std::time(nullptr) != this->time){
-            this->time = std::time(nullptr);
-            std::cout << "FPS = " << this->frames << std::endl;
-            this->current_fps = this->frames;
-            this->frames = 0;
-        }
-        else {
-            frames++;
-        }
 
         if (event->type() == QEvent::KeyPress) {
             auto* keyEvent = dynamic_cast<QKeyEvent *>(event);
@@ -268,16 +252,7 @@ private:
         ball = new Ball();
         ball->setParent(GameSpace);
         ball->init();
-//        ball = new QPushButton(GameSpace);
-//        ball->setObjectName(QString::fromUtf8("ball"));
-//        ball->setGeometry(QRect(256, 256, BALL_SIZE, BALL_SIZE));
-//        ball->setMinimumSize(QSize(16, 16));
-//        ball->setMaximumSize(QSize(BALL_SIZE, BALL_SIZE));
-//        ball->setStyleSheet(QString::fromUtf8("   border-style: outset;\n"
-//                                              "   border-width: 2px;\n"
-//                                              "   border-radius: 8px;\n"
-//                                              "   border-color: beige;\n"
-//                                              "   padding: 2px;"));
+
         this->balls.push_back(ball);
 
 
@@ -558,29 +533,20 @@ public:
         return QWidget::hide();
     }
     void init(auto* window){
-        this->time = std::time(0);
         this->mainMenu = window;
         this->setupUi();
 
         this->platform_y = (float)this->height() - 94.0f;
-        if (DEBUG_BACKGROUND)
-            this->PlatformArea->setStyleSheet("background-color: rgba(97, 53, 13, 75);");
 
-        // this->create_demo_blocks();
         this->wipe_targets_data();
 
         std::cout << "Level path :" << std::endl;
         std::string file_path = "../levels/level_b01.level";
-        //std::cin >> file_path;
         load_level_data(file_path);
     }
 
     void new_game_iteration(){
-        //this->process_ball_collisions();
-        //this->move_ball();
-        //startBallsProcessing:
         for (int i; i < this->balls.size();i++){
-        // for (Ball* _ball : this->balls){
             Ball* _ball = this->balls[i];
             _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &this->targets, this->GameSpace, &this->bonuses, this->GameSpace);
             _ball->process_ball_collisions_with_other_balls(&this->balls);
@@ -595,7 +561,6 @@ public:
                     this->ball->set_y(-64);
                 }
                 this->balls.erase(this->balls.begin() + i);
-                //goto startBallsProcessing;
                 return this->new_game_iteration();
             }
             std::cout << "";
@@ -631,7 +596,6 @@ public:
                         break;
                     case BONUS_TYPE_TRIPLE_SPEED_UP2:
                         this->balls[randint(0, (int)this->balls.size())]->multiply_ball_speed(1.5f);
-                        //std::cout << "Speedbust\n";
                         score += 10;
                         break;
                     case BONUS_TYPE_SCORE:
@@ -660,7 +624,6 @@ public:
         this->platform_speed_multiple = 1.0f;
 
         this->wipe_targets_data();
-        //load_level_data(file_path);
 
         for (auto* _ball : this->balls){
             if (_ball != this->ball)
@@ -673,10 +636,6 @@ public:
         this->balls.clear();
         this->balls.push_back(this->ball);
 
-        // create_demo_blocks();
-        // delete &this->targets;
-
-        // this->resizeEvent(nullptr);
     }
 
 };
