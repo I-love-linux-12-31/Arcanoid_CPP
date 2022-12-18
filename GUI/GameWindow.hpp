@@ -546,7 +546,7 @@ public:
     }
 
     void new_game_iteration(){
-        for (int i; i < this->balls.size();i++){
+        for (int i = 0; i < this->balls.size();i++){
             Ball* _ball = this->balls[i];
             _ball->process_ball_collisions(platform_x, platform_y, (float)platform->width(), (float)this->platform->height(), &this->targets, this->GameSpace, &this->bonuses, this->GameSpace);
             _ball->process_ball_collisions_with_other_balls(&this->balls);
@@ -563,7 +563,6 @@ public:
                 this->balls.erase(this->balls.begin() + i);
                 return this->new_game_iteration();
             }
-            std::cout << "";
         }
         for (Bonus* _bonus : this->bonuses){
             _bonus->move();
