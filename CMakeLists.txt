@@ -29,7 +29,8 @@ add_executable(Arcanoid_cpp
         level_files_handler.hpp
         physics.hpp
         )
-target_link_libraries(Arcanoid_cpp
+target_link_libraries(
+        Arcanoid_cpp
         Qt::Core
         Qt::Gui
         Qt::Widgets
