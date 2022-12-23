@@ -58,6 +58,9 @@ std::vector<std::vector<int>> get_map(std::string &file_path){
     std::cout << " Reading..." << std::endl;
     while(getline(file, buffer)){
         result.push_back(split(buffer));
+        for (int i : split(buffer))
+            std::cout << i << " ";
+        std::cout << std::endl;
     }
     return result;
 }

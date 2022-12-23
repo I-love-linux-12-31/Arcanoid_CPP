@@ -71,7 +71,7 @@ public:
                                                                       "hr { height: 1px; border-width: 0; }\n"
                                                                       "</style></head><body style=\" font-family:'Cantarell'; font-size:11pt; font-weight:700; font-style:normal;\">\n"
                                                                       "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">Copyright (c) 2022, Yaroslav Kuznetsov</span></p>\n"
-                                                                      "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">BSD 2-Clause License</span></p></body></html>", nullptr));
+                                                                      "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-weight:600;\">GPL v3 License</span></p></body></html>", nullptr));
     } // retranslateUi
 
 };

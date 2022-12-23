@@ -418,9 +418,10 @@ private:
         std::vector<std::vector<int>> data = get_map(file_path);
 
         //this->targets.clear();
+        this->targets.clear();
         for (int i = 0 ; i < data.size(); i++){
             this->targets.push_back(new std::vector<TargetBlock*>());
-            for (int j = 0 ; j < data[0].size(); j++){
+            for (int j = 0 ; j < data[i].size(); j++){
                 this->targets[i]->push_back(new TargetBlock());
                 (*this->targets[i])[j]->setParent(this->GameSpace);
                 (*this->targets[i])[j]->set_row(i);
@@ -433,6 +434,7 @@ private:
                     (*this->targets[i])[j]->set_bonus(true);
                     (*this->targets[i])[j]->set_hp(data[i][j] * -1);
                 }
+                (*this->targets[i])[j]->update_color();
 
             }
         }
