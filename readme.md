@@ -1,6 +1,7 @@
 It's simple arcanoid like game.
-![Screenshot](https://github.com/I-love-linux-12-31/Arcanoid_CPP/Report_doc/scr1.png)
-![Screenshot](https://github.com/I-love-linux-12-31/Arcanoid_CPP/Report_doc/scr2.png)
+![Screenshot](https://github.com/I-love-linux-12-31/Arcanoid_CPP/blob/main/Report_doc/scr1.png)
+![Screenshot](https://github.com/I-love-linux-12-31/Arcanoid_CPP/blob/main/Report_doc/scr2.png)
+![Screenshot](https://github.com/I-love-linux-12-31/Arcanoid_CPP/blob/main/Report_doc/scr3.png)
 
 Docs see in Report_Yaroslav_K.pdf
 
