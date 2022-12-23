@@ -28,7 +28,7 @@ private:
     float ball_x = 9999.0f;
     float ball_y = 9999.0f;
     float ball_speed_y = BALL_SPEED_START;
-    float ball_speed_x = BALL_SPEED_START;
+    float ball_speed_x = BALL_SPEED_START * 0.95f;
 
     int _id = 0;
 
@@ -42,7 +42,7 @@ public:
             this->ball_speed_x = 0.0f;
             this->ball_speed_y = 0.0f;
             sleep(1);
-            this->ball_speed_x = BALL_SPEED_START;
+            this->ball_speed_x = BALL_SPEED_START * 0.95f;
             this->ball_speed_y = BALL_SPEED_START;
             return;
         };
@@ -59,7 +59,7 @@ public:
             this->ball_speed_x = old_sx;
             this->ball_speed_y = old_sy;
             if (old_sx == 0.0f and old_sy == 0.0f){
-                this->ball_speed_x = BALL_SPEED_START;
+                this->ball_speed_x = BALL_SPEED_START * 0.95f;
                 this->ball_speed_y = BALL_SPEED_START;
             }
             return;
